@@ -1,0 +1,214 @@
+import random
+
+class RandomName():
+    def __init__(self):
+        self.names = []
+    def give_name(self):
+        return self.names[random.randint(0, len(self.names)-1)]
+
+class Weapon(RandomName):
+    def __init__(self, DMG):
+        self.__DMG = DMG
+        
+    def get_DMG(self):
+        return self.__DMG
+    def get_desc(self):
+        return "this is a weapon"
+    
+class Armour(RandomName):
+    def __init__(self, name, hp):
+        self.__hp = hp
+    def get_hp(self):
+        return self.__hp
+    def get_desc(self):
+        return "This is armour"
+    
+class HealingItem(RandomName):
+    def __init__(self):
+        self._heal = 0
+    def get_heal(self):
+        return self._heal
+    def get_desc(self):
+        return "This is a healing item"
+
+
+class Healing_Flask(HealingItem):
+    def __init__(self):
+        super().__init__()
+        self._heal = 50
+    def get_desc(self):
+        return "This is a Healing Flask: Restores 50hp."
+class Greater_Healing_Flask(HealingItem):
+    def __init__(self):
+        super().__init__()
+        self._heal = 100
+    def get_desc(self):
+        return "This is a Greater Healing Flask: Restores 100hp!"
+class Lesser_Healing_Flask(HealingItem):
+    def __init__(self):
+        super().__init__()
+        self._heal = 25
+    def get_desc(self):
+        return "This is a Lesser Healing Flask: Restores 25hp..."
+
+class Dagger(Weapon):
+    def __init__(self, DMG):
+        super().__init__(DMG)
+        self.names = ["Dagger of Respite", "Broken Dagger", "Holy Dagger"]
+        self.name = self.give_name()
+    def get_desc(self):
+        return f"This is the {self.name}: It deals {self.get_DMG()} Damage"
+class Stick(Weapon):
+    def __init__(self, DMG):
+        super().__init__( DMG)
+        self.names = ["Stick of Doom", "Brownest Stick", "Stick of Calamity"]
+        self.name = self.give_name()
+    def get_desc(self):
+        return f"This is the {self.name}: It deals {self.get_DMG()} Damage"
+class Sword(Weapon):
+    def __init__(self, DMG):
+        super().__init__(DMG)
+        self.names = ["Silver Sword", "Broken Sword", "Sword of The Fallen King"]
+        self.name = self.give_name()
+    def get_desc(self):
+        return f"This is the {self.name}: It deals {self.get_DMG()} Damage"
+class Katana(Weapon):
+    def __init__(self,  DMG):
+        super().__init__(DMG)
+        self.names = ["Issei's Katana", "Samurais's Hope", "Abyssal Blade"]
+        self.name = self.give_name()
+        def get_desc(self):
+            return f"This is the {self.name}: It deals {self.get_DMG()} Damage"
+
+
+class IronArmour(Armour):
+    def __init__(self, name, hp):
+        super().__init__(name, hp)
+    def get_desc(self):
+        return f"This is {self.name}: It adds {self.get_DMG()} HP"
+class BedSheets(Armour):
+    def __init__(self, name, hp):
+        super().__init__(name, hp)
+    def get_desc(self):
+        return f"This is {self.name}: It adds {self.get_DMG()} HP"
+class HelmetOfVitality(Armour):
+    def __init__(self, name, hp):
+        super().__init__(name, hp)
+    def get_desc(self):
+        return f"This is {self.name}: It adds {self.get_DMG()} HP"
+
+
+#################################################################################################################################
+import random
+
+class RandomName():
+    def __init__(self, desc):
+        self.names = []
+        self.desc = desc
+    def give_name(self):
+        return self.names[random.randint(0, len(self.names)-1)]
+
+class Weapon(RandomName):
+    def __init__(self, DMG, desc):
+        super().__init__(desc)
+        self.__DMG = DMG
+    def get_DMG(self):
+        return self.__DMG
+    def get_desc(self):
+        return "this is a weapon"
+    
+class Armour(RandomName):
+    def __init__(self, hp, desc):
+        super().__init__(desc)
+        self.__hp = hp
+    def get_hp(self):
+        return self.__hp
+    def get_desc(self):
+        return "This is armour"
+    
+class HealingItem(RandomName):
+    def __init__(self, heal_amount, name):
+        self._heal = heal_amount
+        super().__init__(f"This is a {name}: Restores {heal_amount}hp.")
+    def get_heal(self):
+        return self._heal
+    def get_desc(self):
+        return "This is a healing item"
+
+class Healing_Flask(HealingItem):
+    def __init__(self):
+        super().__init__(50, "Healing Flask")
+    def get_desc(self):
+        return self.desc
+class Greater_Healing_Flask(HealingItem):
+    def __init__(self):
+        super().__init__(100, "Greater Healing Flask")
+    def get_desc(self):
+        return self.desc
+class Lesser_Healing_Flask(HealingItem):
+    def __init__(self):
+        super().__init__(25, "Lesser Healing Flask")
+    def get_desc(self):
+        return self.desc
+
+class Dagger(Weapon):
+    def __init__(self, DMG):
+        super().__init__(DMG)
+        self.names = ["Dagger of Respite", "Broken Dagger", "Holy Dagger"]
+        self.name = self.give_name()
+    def get_desc(self):
+        return f"This is the {self.name}: It deals {self.get_DMG()} Damage"
+class Stick(Weapon):
+    def __init__(self, DMG):
+        super().__init__(DMG)
+        self.names = ["Stick of Doom", "Brownest Stick", "Stick of Calamity"]
+        self.name = self.give_name()
+    def get_desc(self):
+        return f"This is the {self.name}: It deals {self.get_DMG()} Damage"
+class Sword(Weapon):
+    def __init__(self, DMG):
+        super().__init__(DMG)
+        self.names = ["Silver Sword", "Broken Sword", "Sword of The Fallen King"]
+        self.name = self.give_name()
+    def get_desc(self):
+        return f"This is the {self.name}: It deals {self.get_DMG()} Damage"
+class Katana(Weapon):
+    def __init__(self, DMG):
+        super().__init__(DMG)
+        self.names = ["Issei no Katana", "Samurais's Hope", "Abyssal Blade", "夜の剣"]
+        self.name = self.give_name()
+    def get_desc(self):
+        return f"This is the {self.name}: It deals {self.get_DMG()} Damage"
+
+class IronArmour(Armour):
+    def __init__(self, hp):
+        super().__init__(hp)
+        self.names = ["Shiny Iron Armour", "The Samurais's Dawn", "Armour of the Fallen", "Completely Normal Armour"]
+        self.name = self.give_name()
+    def get_desc(self):
+        return f"This is {self.name}: It adds {self.get_DMG()} HP"
+class BedSheets(Armour):
+    def __init__(self, hp):
+        super().__init__(hp)
+        self.names = ["Bedsheet of The Fallen", "The Comfiest Sheet", "Wet Sheet", "The One Sheet"]
+        self.name = self.give_name()
+    def get_desc(self):
+        return f"This is {self.name}: It adds {self.get_DMG()} HP"
+class HelmetOfVitality(Armour):
+    def __init__(self, hp):
+        super().__init__(hp)
+        self.names = ["The Helmet Name", "A Minion Mask", "A Bicyle Helmet", "A Sleeping Mask"]
+        self.name = self.give_name()
+        
+    def get_desc(self):
+        return f"This is {self.name}: It adds {self.get_DMG()} HP"
+
+dagger = Dagger(10)
+stick = Stick(20)
+sword = Sword(40)
+katana = Katana(50)
+dagger.give_name()
+stick.give_name()
+sword.give_name()
+katana.give_name()
+

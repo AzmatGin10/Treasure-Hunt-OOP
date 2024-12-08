@@ -3,8 +3,7 @@ from rich.console import Console
 from rich.progress import Progress
 from CombatState import CombatStateMachine
 from BaseEntity import Entity
-from Items import Weapon, Armour, Dagger, Katana, IronArmour, HelmetOfVitality
-
+from Items import Item, Weapon, Armour, HealingItem, CreateRandomWeapon
 
 console = Console()
 
@@ -75,17 +74,18 @@ class Boss(Entity):
         self.get_guard = True
     def big_attack(self, player):
         player.set_hp(self.get_DMG*5 if not player.get_guard() else self.get_DMG()*2)  
+        
+        
 
 
 player = Player("Ryan", 200, 20, 100)
 enemy = Player("Skeleton", 100, 10, 100)
 boss = Boss("Ogre", 500, 20, 10)
-dagger = Dagger("Dagger of Respite", 5)
-katana = Katana("Katana of Swirling Winds", 20)
-ironarmour = IronArmour("IronArmour", 10)
-
-
-
-
+random_dagger = CreateRandomWeapon("dagger")
+random_stick = CreateRandomWeapon("stick")
+dagger1 = random_dagger.make_weapon()
+print(dagger1.get_desc())
+player.equip_weapon(dagger1)
+player.attack(enemy)
 
     

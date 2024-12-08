@@ -47,11 +47,16 @@ class Entity(CombatStateMachine):
             self.use_energy()
             if self.get_stamina() <= 50:
                 self.TransitionState()
-        else:
+        elif self.currentstate == "tired":
             self.tiredcount += 1
+            
             entity.set_hp(self.get_DMG()/2)
             self.use_energy()
             if self.tiredcount == 3:
                 self.TransitionState()
                 self.tiredcount = 0
-                self.recover()
+        else:
+            self.TransitionState()
+            self.recover()
+            return False
+        
