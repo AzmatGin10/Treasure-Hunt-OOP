@@ -6,13 +6,14 @@
 #=> perfom convert function on each cell of each row and adds it all together
 
 def ConvertCell(cell):
-    if cell == "":
-        return "*"
+    if isinstance(cell, str):
+        return cell
     elif cell: 
         return "#" 
     else:
         return " "
-    
+def Valid_move(maze, start, move):
+    pass
 
 
 def PrintMaze(maze):
@@ -23,7 +24,7 @@ def PrintMaze(maze):
     for row in final_maze:
         print("  ".join(x for x in row))
 
-def Movement(maze, location):
+def Move(maze, location):
     UserInput = input()
     directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]
     if UserInput == "w":
@@ -38,21 +39,18 @@ def Movement(maze, location):
         pass
              
 BossRoom = [
-    [True, True, True, True, True, True, True, True],
-    [True, False, False, False, False, False, False, True],
-    [True, False, False, False, False, False, False, True],
-    [True, False, False, False, False, False, False, True],
-    [True, False, False, False, False, False, False, True],
-    [True, False, False, "", False, False, False, True],
-    [True, False, False, False, False, False, False, True],
-    [True, True, True, False, False, True, True, True],
+    [True, True, True, True, True, True, True],
+    [True, False, False, False, False, False, True],
+    [True, False, False, False, False, False, True],
+    [True, False, False, False, False, False, True],
+    [True, False, False, False, False, False, True],
+    [True, False, False, False, False, False, True],
+    [True, False, False, False, False, False, True],
+    [True, True, False, "", False, True, True]
 ]
 
 
 
-#while True:
-    #input()
-    
-maze = PrintMaze(BossRoom)
-for row in maze:
-    print(row)
+
+#maze = PrintMaze(BossRoom)
+

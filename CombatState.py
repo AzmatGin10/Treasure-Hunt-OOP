@@ -1,14 +1,14 @@
-class State:
+class CombatState:
     def __init__(self, context):
         self.context = context
     def OnEnter(self):
         pass
-class ActiveState(State):
+class ActiveState(CombatState):
     #overriding
     def OnEnter(self):
         
         return "tired"
-class TiredState(State):
+class TiredState(CombatState):
     #overriding
     def OnEnter(self):
         return "active"
