@@ -59,4 +59,3 @@ class Entity(CombatStateMachine):
             self.TransitionState()
             self.recover()
             return False
-        

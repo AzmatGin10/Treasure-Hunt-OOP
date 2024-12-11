@@ -63,4 +63,5 @@ class Maze:
 
 
 maze = Maze("", "", 9)
+maze.PrintMaze(maze.Generate())
 

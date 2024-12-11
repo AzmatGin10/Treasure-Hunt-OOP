@@ -14,6 +14,7 @@ class Player(Entity):
         self.currentarmour = ""
         self.weapons = []
         self.armour = []
+        #need a proper inventory
     def equip_weapon(self, weapon):
         if self.currentweapon == "":
             self.set_DMG(weapon.get_DMG())
@@ -60,7 +61,8 @@ class Player(Entity):
                 progress.add_task("[bold green]Stamina", total=enemy.get_max_stamina(), completed=enemy.get_stamina())
                 progress.add_task("[bold purple]DMG", total=enemy.get_max_DMG(), completed=enemy.get_DMG())
     def loadout(self):
-        pass
+        return f"Current Weapon: {self.currentweapon.get_name()}\nCurrent Armour {self.currentarmour}\nInventory: {self.weapons+self.armour}"
+        #not fully implemented
 class Enemy(Entity):
     def __init__(self, name, hp, DMG, stamina):
         super().__init__(name, hp, DMG, stamina)
@@ -73,7 +75,7 @@ class Boss(Entity):
     def defend(self):
         self.get_guard = True
     def big_attack(self, player):
-        player.set_hp(self.get_DMG*5 if not player.get_guard() else self.get_DMG()*2)  
+        player.set_hp(self.get_DMG()*-5 if not player.get_guard() else self.get_DMG()*-2)  
         
         
 
@@ -84,8 +86,11 @@ boss = Boss("Ogre", 500, 20, 10)
 random_dagger = CreateRandomWeapon("dagger")
 random_stick = CreateRandomWeapon("stick")
 dagger1 = random_dagger.make_weapon()
-print(dagger1.get_desc())
+dagger2 = random_dagger.make_weapon()
 player.equip_weapon(dagger1)
-player.attack(enemy)
+print(player.loadout())
+player.equip_weapon(dagger2)
+print(player.loadout())
+
 
     
