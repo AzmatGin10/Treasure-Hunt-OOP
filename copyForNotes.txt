@@ -212,3 +212,60 @@ stick.give_name()
 sword.give_name()
 katana.give_name()
 
+#############################################################################################################################
+    def PlayerExplore(self):
+        playerX, playerY = self.startX, self.startY
+        def IsValidMove(maze, positionX, positionY):
+            print((positionX, positionY))
+            return 0 < positionX < self.mazeSize and 0 < positionY < self.mazeSize and not maze[positionY][positionX]
+        directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]
+        self.maze[self.startY][self.startX] = "@"
+        while True:
+            clear_console()
+            self.PrintMaze(self.maze)
+            PlayerInput = input()
+            print((playerX, playerY))
+            if PlayerInput == "w":
+                if IsValidMove(self.maze, playerX, playerY-1):
+                    self.maze[playerY][playerX] = False
+                    playerX, playerY = playerX, playerY-1
+                    self.maze[playerY][playerX] = "@"
+                    clear_console()
+                    self.PrintMaze(self.maze)
+                else:
+                    pass
+            elif PlayerInput == "a":
+                if IsValidMove(self.maze, playerX-1, playerY):
+                    self.maze[playerY][playerX] = False
+                    playerX, playerY = playerX-1, playerY
+                    self.maze[playerY][playerX] = "@"
+                    clear_console()
+                    self.PrintMaze(self.maze)
+                    
+                else:
+                    pass
+            elif PlayerInput == "s":
+                if IsValidMove(self.maze, playerX, playerY+1):
+                    self.maze[playerY][playerX] = False
+                    playerX, playerY = playerX, playerY+1
+                    self.maze[playerY][playerX] = "@"
+                    clear_console()
+                    self.PrintMaze(self.maze)
+                    
+                else:
+                    pass
+            elif PlayerInput == "d":
+                if IsValidMove(self.maze, playerX+1, playerY):
+                    self.maze[playerY][playerX] = False
+                    playerX, playerY = playerX+1, playerY
+                    self.maze[playerY][playerX] = "@"
+                    clear_console()
+                    self.PrintMaze(self.maze)
+                else:
+                    pass
+#start off with directions to travel
+#function for movement will work on the base mazethat hasnt been converted, => self, playerpostion, enemy position 
+#every input w a s d => clear console and printmaZE again
+#1) take in user input of wasd, and check if it is a valid movement => the cell is False and = > 0 <= newX < self.mazeSize and 0 <= newY < self.mazeSize
+#convert current cell to False and next cell to player symbol
+#reprint the maze, have a while loop to repeat this process

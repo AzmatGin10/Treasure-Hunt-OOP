@@ -23,21 +23,7 @@ def PrintMaze(maze):
         final_maze.append(converted_row)
     for row in final_maze:
         print("  ".join(x for x in row))
-
-def Move(maze, location):
-    UserInput = input()
-    directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]
-    if UserInput == "w":
-        pass
-    elif UserInput == "a":
-        pass
-    elif UserInput =="s":
-        pass
-    elif UserInput == "d":
-        pass
-    else:
-        pass
-             
+         
 BossRoom = [
     [True, True, True, True, True, True, True],
     [True, False, False, False, False, False, True],
@@ -49,8 +35,5 @@ BossRoom = [
     [True, True, False, "", False, True, True]
 ]
 
-
-
-
-#maze = PrintMaze(BossRoom)
+maze = PrintMaze(BossRoom)
 
