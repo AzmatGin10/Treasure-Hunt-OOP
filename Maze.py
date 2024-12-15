@@ -103,15 +103,8 @@ class Maze:
                     clear_console()
                     self.PrintMaze(self.maze)
 
-#start off with directions to travel
-#function for movement will work on the base mazethat hasnt been converted, => self, playerpostion, enemy position 
-#every input w a s d => clear console and printmaZE again
-#1) take in user input of wasd, and check if it is a valid movement => the cell is False and = > 0 <= newX < self.mazeSize and 0 <= newY < self.mazeSize
-#convert current cell to False and next cell to player symbol
-#reprint the maze, have a while loop to repeat this process
+#maze = Maze("", "", 29)
 
-maze = Maze("", "", 21)
-
-maze.PlayerExplore()
+#maze.PlayerExplore()
 
 

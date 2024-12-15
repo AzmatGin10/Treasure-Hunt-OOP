@@ -91,6 +91,3 @@ player.equip_weapon(dagger1)
 print(player.loadout())
 player.equip_weapon(dagger2)
 print(player.loadout())
-
-
-    
