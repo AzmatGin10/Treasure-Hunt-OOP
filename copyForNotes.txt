@@ -320,3 +320,14 @@ katana.give_name()
 #1 use bfs to find possible nodes that could be an exit, reaches a threshold of distance
 #2 filters out the nodes based on thier nieghbours to see if it has the above requiremnet
 #3 have a list of possible exits and choose a random one of the list
+
+################################################################################################
+there was an error with the exit generation that resulted in the player start osition being the same as the eit. I tried tp resolve this by 
+making it so the start position is not considered as a viable option
+however smetimes this pos was the only optiona and so an issue would arise and break the generation
+to resolve this i came up with a soltuion
+It would reduce the min distance the exit needed to be and use recursion to find find another posible exit with reduced distance
+each time this occurres an errorcount would be used and if this equates to three...
+it would regenerate the maze again and start finding an exit again, this is because the issue of the maze exit fault
+is very uncommon and so simply regeneating befofre showing the maze is a simple but
+quick way to resolve the issue

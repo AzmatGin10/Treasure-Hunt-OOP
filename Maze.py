@@ -16,9 +16,10 @@ class Maze:
         self.startX = 2*random.randint(0, self.mazeSize//2 - 1) + 1
         self.startY = 2*random.randint(0, self.mazeSize//2 - 1) + 1
         self.maze = self.Generate()
-        self.min_distance = self.mazeSize
+        self.min_distance = self.mazeSize//3
         self.exitX = None
         self.exitY = None
+        self.errorcount = 0
     def Generate(self):
         directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]
         maze = [[True]*self.mazeSize for x in range(self.mazeSize)]
@@ -47,8 +48,9 @@ class Maze:
             else:
                 stack.pop()            
         return maze
-    def endpos(self):
-        
+    def EndPos(self):
+        if self.errorcount == 3:
+            self.maze = self.Generate()
         directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
         visited =set()
         bfs_queue = [((self.startX, self.startY), 0)]
@@ -84,11 +86,16 @@ class Maze:
             if count == 3:
                 filtered_result.append(cell)
                 count = 0
-            
+        for position in filtered_result:
+            if position == (self.startY, self.startX):
+                filtered_result.remove(position)
+        if len(filtered_result) == 0:
+            self.min_distance == self.min_distance//1.5
+            self.errorcount += 1
+            filtered_result = self.endpos()
         exit = filtered_result[random.randint(0, len(filtered_result)-1)]
-        self.exitX = exit[1]
-        self.exitY = exit[0]
-
+        self.exitX, self.exitY = exit[1], exit[0]
+        
     def ConvertCell(self, cell):
         if isinstance(cell, str):
             return cell
@@ -103,8 +110,12 @@ class Maze:
             final_maze.append(converted_row)
         for row in final_maze:
             print("  ".join(x for x in row))
+    def EnemyLocation(self):
+        possible_locations = []
+        for position in self.maze:
+            pass
     def PlayerExplore(self):
-        self.endpos()
+        self.EndPos()
         playerX, playerY = self.startX, self.startY
         def IsValidMove(maze, positionX, positionY):
             print((positionX, positionY))
@@ -152,14 +163,17 @@ class Maze:
 maze = Maze("", "", 21)
 maze.PlayerExplore()
 
+#adding random enemies to the maze
+#number of enemies will be dependent of the maze sieze
+#function will only repeat a set of co ordinates so it wont be displayed on map
+#itll be like a pokemon style combat system
+#enemies can be anyone aslong as its in path and it is not the start position
+#1) filterout the possible posiition of the enemy => check if is False
+#2) remove the player position => simple
+#3) pick a random number of random coordinates based on mazesize => ask people
+#4) store values in initializer => have a array for enemy positions
+#5) make it so if the player lands on these position a combat system will be engaged
+#6) need a smooth transition back into the map
 
-#adding an exit to the maze
-#use bfs to find a nod with a certain distance away from the start postition
-#its neighbours must all be True except for 1 => means it is an enclosed area
-#distacnce will be determined based on mazesize for generalisation
-#change cell into a string for exit some symbol => "E"
-#1 use bfs to find possible nodes that could be an exit, reaches a threshold of distance
-#2 filters out the nodes based on thier nieghbours to see if it has the above requiremnet
-#3 have a list of possible exits and choose a random one of the list
 
 
