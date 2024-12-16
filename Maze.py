@@ -20,6 +20,8 @@ class Maze:
         self.exitX = None
         self.exitY = None
         self.errorcount = 0
+    def CleanUp(self):
+        self.maze = self.Generate()
     def Generate(self):
         directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]
         maze = [[True]*self.mazeSize for x in range(self.mazeSize)]
@@ -49,8 +51,6 @@ class Maze:
                 stack.pop()            
         return maze
     def EndPos(self):
-        if self.errorcount == 3:
-            self.maze = self.Generate()
         directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
         visited =set()
         bfs_queue = [((self.startX, self.startY), 0)]
@@ -90,9 +90,8 @@ class Maze:
             if position == (self.startY, self.startX):
                 filtered_result.remove(position)
         if len(filtered_result) == 0:
-            self.min_distance == self.min_distance//1.5
-            self.errorcount += 1
-            filtered_result = self.endpos()
+            self.CleanUp()
+            self.EndPos()
         exit = filtered_result[random.randint(0, len(filtered_result)-1)]
         self.exitX, self.exitY = exit[1], exit[0]
         
