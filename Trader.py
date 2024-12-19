@@ -1,3 +1,4 @@
+
 #Buy weapons, armour and health potions => TradeEvent()
 #A place to talk and get infomation => TalkEvent()
 #A place to get side quests, simpke things like getting a certain weapon QuestGiverEvent()

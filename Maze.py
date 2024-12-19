@@ -16,7 +16,7 @@ class Maze:
         self.startX = 2*random.randint(0, self.mazeSize//2 - 1) + 1
         self.startY = 2*random.randint(0, self.mazeSize//2 - 1) + 1
         self.maze = self.Generate()
-        self.min_distance = self.mazeSize//3
+        self.min_distance = self.mazeSize//2
         self.exitX = None
         self.exitY = None
         self.errorcount = 0
@@ -50,6 +50,18 @@ class Maze:
             else:
                 stack.pop()            
         return maze
+    def BossRoom(self):
+        BossRoom = [
+    [True, True, True, True, True, True, True],
+    [True, False, False, False, False, False, True],
+    [True, False, False, False, False, False, True],
+    [True, False, False, False, False, False, True],
+    [True, False, False, False, False, False, True],
+    [True, False, False, False, False, False, True],
+    [True, False, False, False, False, False, True],
+    [True, True, False, "@", False, True, True]
+]
+        return BossRoom
     def EndPos(self):
         directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
         visited =set()
@@ -109,11 +121,22 @@ class Maze:
             final_maze.append(converted_row)
         for row in final_maze:
             print("  ".join(x for x in row))
-    def EnemyLocation(self):
-        possible_locations = []
-        for position in self.maze:
-            pass
+    def SpawnEnemy(self):
+        maze = self.maze
+        no_of_enemies = self.mazeSize//5
+        enemy_locations = []
+        
+        for cell in maze:
+            enemyX, enemyY = random.randint(1, self.mazeSize-1), random.randint(1, self.mazeSize-1)
+            if not maze[enemyY][enemyX] and enemyX != self.startX and enemyY != self.startY:
+                enemy_locations.append((enemyX, enemyY))
+                enemyX, enemyY = random.randint(1, self.mazeSize-1), random.randint(1, self.mazeSize-1)
+            if len(enemy_locations) == no_of_enemies:
+                break
+        return enemy_locations
     def PlayerExplore(self):
+        
+        enemies = self.SpawnEnemy()
         self.EndPos()
         playerX, playerY = self.startX, self.startY
         def IsValidMove(maze, positionX, positionY):
@@ -121,11 +144,18 @@ class Maze:
             return 0 < positionX < self.mazeSize and 0 < positionY < self.mazeSize and not maze[positionY][positionX] or isinstance(maze[positionY][positionX], str)
         self.maze[self.startY][self.startX] = "@"
         self.maze[self.exitY][self.exitX] = "E"
+        input("Note: 'E' is the exit\nenemies are random and invisible\nT is Treasure")
         while True:
             clear_console()
+            
             self.PrintMaze(self.maze)
             PlayerInput = getch.getch()
-             
+            for enemy in enemies:
+                if playerX == enemy[0] and playerY == enemy[1]:
+                    clear_console()
+                    input("You encountered an enemy!\nGet ready for Combat!")
+                    enemies.remove((playerX, playerY))
+                    #initialise combat
             if PlayerInput == "w":
                 if IsValidMove(self.maze, playerX, playerY-1):
                     self.maze[playerY][playerX] = False
@@ -159,12 +189,12 @@ class Maze:
             if (playerX, playerY) == (self.exitX, self.exitY):
                 print("Well done! You have completed the maze!")
                 break
-maze = Maze("", "", 21)
+maze = Maze("", "", 23)
 maze.PlayerExplore()
 
 #adding random enemies to the maze
 #number of enemies will be dependent of the maze sieze
-#function will only repeat a set of co ordinates so it wont be displayed on map
+#function will only return a set of co ordinates so it wont be displayed on map
 #itll be like a pokemon style combat system
 #enemies can be anyone aslong as its in path and it is not the start position
 #1) filterout the possible posiition of the enemy => check if is False
@@ -175,4 +205,4 @@ maze.PlayerExplore()
 #6) need a smooth transition back into the map
 
 
-
+ 

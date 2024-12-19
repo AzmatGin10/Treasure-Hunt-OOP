@@ -12,57 +12,54 @@ class Player(Entity):
         super().__init__(name, hp, DMG, stamina)
         self.currentweapon = ""
         self.currentarmour = ""
-        self.weapons = []
-        self.armour = []
-        #need a proper inventory
+        self.inventory = []
     def equip_weapon(self, weapon):
-        if self.currentweapon == "":
-            self.set_DMG(weapon.get_DMG())
-            self.currentweapon = weapon
+        if len(self.inventory) < 10:
+            if self.currentweapon == "":
+                self.set_DMG(weapon.get_DMG())
+                self.currentweapon = weapon
+                self.inventory.append(weapon)
+            else:
+                self.set_DMG(self.currentweapon.get_DMG()*-1)
+                self.set_DMG(weapon.get_DMG())
+                self.currentweapon = weapon
+                self.inventory.append(weapon)
         else:
-            self.set_DMG(self.currentweapon.get_DMG()*-1)
-            self.set_DMG(weapon.get_DMG())
-            self.currentweapon = weapon
+            pass
     def equip_armour(self, armour):
-        if self.currentarmour == "":
-            self.set_hp(armour.get_hp())
-            self.currentarmour = armour
+        if len(self.inventory) < 10:
+                
+            if self.currentarmour == "":
+                self.set_hp(armour.get_hp())
+                self.currentarmour = armour
+                self.inventory.append(armour)
+            else:
+                self.set_hp(self.currentarmour.get_hp()*-1)
+                self.set_hp(armour.get_hp())
+                self.currentarmour = armour
+                self.inventory.append(armour)
         else:
-            self.set_hp(self.currentarmour.get_hp()*-1)
-            self.set_hp(armour.get_hp())
-            self.currentarmour = armour
+            pass
     def heal(self, item):
         self.set_hp(item)
     
     def defend(self):
         self.set_guard(True)
     def view_stats(self):
-        if self.currentstate == "active":
-            with Progress(console=console) as progress:
-                progress.add_task("[bold red]HP", total=self.get_max_hp(), completed=self.get_hp())
-                progress.add_task("[bold green]Stamina", total=self.get_max_stamina(), completed=self.get_stamina())
-                progress.add_task("[bold purple]DMG", total=self.get_max_DMG(), completed=self.get_DMG())
-        else:
-            with Progress(console=console) as progress:
-                progress.add_task("[bold red]HP", total=self.get_max_hp(), completed=self.get_hp())
-                progress.add_task("[bold green]Stamina", total=self.get_max_stamina(), completed=self.get_stamina())
-                progress.add_task("[bold purple]DMG", total=self.get_max_DMG(), completed=self.get_DMG()/2)
-        
+    
+        with Progress(console=console) as progress:
+            progress.add_task("[bold red]HP", total=self.get_max_hp(), completed=self.get_hp())
+            progress.add_task("[bold green]Stamina", total=self.get_max_stamina(), completed=self.get_stamina())
+            progress.add_task("[bold purple]DMG", total=self.get_max_DMG(), completed=self.get_DMG())
             
     def view_enemy(self, enemy):
-        if enemy.currentstate == "active":
-            with Progress(console=console) as progress:
-                progress.add_task("[bold red]HP", total=enemy.get_max_hp(), completed=enemy.get_hp())
-                progress.add_task("[bold green]Stamina", total=enemy.get_max_stamina(), completed=enemy.get_stamina())
-                progress.add_task("[bold purple]DMG", total=enemy.get_max_DMG(), completed=enemy.get_DMG())
-        else:
-            with Progress(console=console) as progress:
-                progress.add_task("[bold red]HP", total=enemy.get_max_hp(), completed=enemy.get_hp())
-                progress.add_task("[bold green]Stamina", total=enemy.get_max_stamina(), completed=enemy.get_stamina())
-                progress.add_task("[bold purple]DMG", total=enemy.get_max_DMG(), completed=enemy.get_DMG())
+        with Progress(console=console) as progress:
+            progress.add_task("[bold red]HP", total=enemy.get_max_hp(), completed=enemy.get_hp())
+            progress.add_task("[bold green]Stamina", total=enemy.get_max_stamina(), completed=enemy.get_stamina())
+            progress.add_task("[bold purple]DMG", total=enemy.get_max_DMG(), completed=enemy.get_DMG())
     def loadout(self):
-        return f"Current Weapon: {self.currentweapon.get_name()}\nCurrent Armour {self.currentarmour}\nInventory: {self.weapons+self.armour}"
-        #not fully implemented
+        return f"Current Weapon: {self.currentweapon.get_name()}\nCurrent Armour {self.currentarmour}\nInventory: {[item.get_name() for item in self.inventory]}"
+        
 class Enemy(Entity):
     def __init__(self, name, hp, DMG, stamina):
         super().__init__(name, hp, DMG, stamina)
@@ -76,8 +73,7 @@ class Boss(Entity):
         self.get_guard = True
     def big_attack(self, player):
         player.set_hp(self.get_DMG()*-5 if not player.get_guard() else self.get_DMG()*-2)  
-        
-        
+
 
 
 player = Player("Ryan", 200, 20, 100)
@@ -88,6 +84,24 @@ random_stick = CreateRandomWeapon("stick")
 dagger1 = random_dagger.make_weapon()
 dagger2 = random_dagger.make_weapon()
 player.equip_weapon(dagger1)
-print(player.loadout())
-player.equip_weapon(dagger2)
-print(player.loadout())
+#print(player.view_stats())
+while True:
+    userInput = input("1 is player attack boss, 2 is boss attack player, 3 is a big attack")
+    if player.get_hp() <= 0:
+        print("Player has died")
+        break
+    if boss.get_hp() <= 0:
+        print("boss has died")
+        break
+    
+    if userInput == "1":
+        player.attack(boss)
+        print(boss.get_hp())
+    if userInput == "2":
+        boss.attack(player)
+        print(player.get_hp())
+    if userInput == "3":
+        boss.big_attack(player)
+        print(player.get_hp())
+
+
