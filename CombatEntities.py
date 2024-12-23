@@ -1,7 +1,6 @@
 import questionary
 from rich.console import Console
 from rich.progress import Progress
-from CombatState import CombatStateMachine
 from BaseEntity import Entity
 from Items import Item, Weapon, Armour, HealingItem, CreateRandomWeapon
 
@@ -84,16 +83,12 @@ random_stick = CreateRandomWeapon("stick")
 dagger1 = random_dagger.make_weapon()
 dagger2 = random_dagger.make_weapon()
 player.equip_weapon(dagger1)
-#print(player.view_stats())
+
+print(player.view_stats())
+print(player.currentweapon.get_desc())
 while True:
     userInput = input("1 is player attack boss, 2 is boss attack player, 3 is a big attack")
-    if player.get_hp() <= 0:
-        print("Player has died")
-        break
-    if boss.get_hp() <= 0:
-        print("boss has died")
-        break
-    
+   
     if userInput == "1":
         player.attack(boss)
         print(boss.get_hp())
@@ -103,5 +98,11 @@ while True:
     if userInput == "3":
         boss.big_attack(player)
         print(player.get_hp())
-
+    if player.get_hp() <= 0:
+        print("Player has died")
+        break
+    if boss.get_hp() <= 0:
+        print("boss has died")
+        break
+    
 

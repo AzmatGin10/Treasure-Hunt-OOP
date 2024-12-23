@@ -1,8 +1,6 @@
-from CombatState import CombatStateMachine
 
-class Entity(CombatStateMachine):
+class Entity():
     def __init__(self, name, hp, DMG, stamina):
-        super().__init__()
         self.__name = name
         self.__hp = hp
         self.__DMG = DMG
@@ -41,21 +39,16 @@ class Entity(CombatStateMachine):
     def get_max_stamina(self):
         return self.__max_stamina
     def attack(self, entity):
-        
-        if self.currentstate == "active":
-            entity.set_hp(self.get_DMG()*-1 if not entity.get_guard() else self.get_DMG()/-2)
+        if self.tiredcount >= 3:
+            self.set_stamina(self.get_stamina()*-1)
+            self.set_stamina(self.__max_stamina)
+        if self.get_stamina()//self.get_max_stamina() >= 0.5:
+            entity.set_hp(self.get_DMG()*-1 if not entity.get_guard() else self.get_DMG()*-2)
             self.use_energy()
-            if self.get_stamina() <= 50:
-                self.TransitionState()
-        elif self.currentstate == "tired":
-            self.tiredcount += 1
-            
-            entity.set_hp(self.get_DMG()/-2)
-            self.use_energy()
-            if self.tiredcount == 3:
-                self.TransitionState()
-                self.tiredcount = 0
         else:
-            self.TransitionState()
-            self.recover()
-            return False
+            entity.set_hp(self.get_DMG()/-2 if not entity.get_guard() else self.get_DMG()/-4)
+            self.tiredcount += 1
+            self.use_energy()
+            
+            
+            

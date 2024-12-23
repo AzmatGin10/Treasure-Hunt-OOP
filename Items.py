@@ -50,12 +50,4 @@ class CreateRandomWeapon():
     }
     def make_weapon(self):
         return Weapon(self.weapon_names[self.chosen_weapon][random.randint(0, len(self.weapon_names[self.chosen_weapon])-1)])
-dagger = CreateRandomWeapon("dagger")
-dagger1 = dagger.make_weapon()
-dagger2 = dagger.make_weapon()
-print(dagger1.get_name())
-print(dagger1.get_DMG())
-print(dagger2.get_name())
 
-print(dagger2.get_DMG())
-print(dagger1.get_desc())
