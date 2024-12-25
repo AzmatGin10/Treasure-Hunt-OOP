@@ -1,12 +1,86 @@
- for cell in result:
-            count = 0
-            neighbours = []
+class CombatState:
+    def __init__(self, context):
+        self.context = context
+    def OnEnter(self):
+        pass
+class ActiveState(CombatState):
+    #overriding
+    def OnEnter(self):
+        return "tired"
+
+class TiredState(CombatState):
+    #overriding
+    def OnEnter(self):
+        return "collapsed"
+class CollapsedState(CombatState):
+    #overriding
+    def OnEnter(self):
+        return "active"
+class CombatStateMachine:
+    def __init__(self):
+        self.states = {
+            "active" : ActiveState(self),
+            "tired" : TiredState(self),
+            "collapsed" : CollapsedState(self)
+        }        
+        self.currentstate = "active"
+    def TransitionState(self):
+        nextstate = self.states[self.currentstate].OnEnter()
+        if self.currentstate != nextstate:
+            self.currentstate = nextstate
+
+
+
+
+            def EndPos(self):
+        if self.errorcount == 3:
+            self.min_distance /= 2
+            self.errorcount = 0
+            self.EndPos()
+        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+        visited =set()
+        bfs_queue = [(self.startX, self.startY)]
+        distanceLevels = {}
+        current_distance = 0
+        result = []
+        filtered_result = []
+        visited.add((self.startX, self.startY))
+        while bfs_queue:
+            (current_x, current_y), current_distance = bfs_queue.pop(0)
+
+            if current_distance > self.min_distance:
+                result.append((current_x, current_y))
+            random.shuffle(directions)
+
             for dir in directions:
-                neighbours.append((cell[0]+dir[0], cell[1]+dir[1]))
-            for neighbour in neighbours:
-                if self.maze[neighbour[1]][neighbour[0]]:
-                    count += 1
-                if count == 3:
-                    filtered_result.append(cell)
+
+                new_x, new_y = current_x + dir[0], current_y + dir[1]
+
+                if 0 < new_x < self.mazeSize and 0 < new_y < self.mazeSize and not self.maze[new_y][new_x]:
+
+                    if (new_x, new_y) not in visited:
+                        visited.add((new_x, new_y))
+                        bfs_queue.append(((new_x, new_y), current_distance+1))
+        for cell in result:
             count = 0
-            neighbours = []
+            for dir in directions:
+                neighbour = (cell[0] + dir[0], cell[1] + dir[1])
+                if self.maze[neighbour[0]][neighbour[1]]:
+                    count += 1
+            if count == 3:
+                filtered_result.append(cell)
+                count = 0
+        for position in filtered_result:
+            if position == (self.startY, self.startX):
+                filtered_result.remove(position)
+        if len(filtered_result) == 0:
+            self.errorcount += 1
+            self.CleanUp()
+            self.EndPos()
+        if len(filtered_result) == 1:
+            exit = filtered_result.pop()
+        else:
+            exit = filtered_result.pop(random.randint(0, len(filtered_result)-1))
+        
+        self.exitX, self.exitY = exit[1], exit[0]
+        
