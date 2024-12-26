@@ -1,10 +1,4 @@
 import random
-weapons_names = {
-        "dagger" : ["Dagger of Respite", "Broken Dagger", "Holy Dagger"],
-        "sword" : ["Silver Sword", "Broken Sword", "Sword of The Fallen King"],
-        "katana" :  ["Issei no Katana", "Samurais's Hope", "Abyssal Blade", "夜の剣"],
-        "stick" : ["Stick of Doom", "Brownest Stick", "Stick of Calamity"]
-    }
 class Item:
     def __init__(self, name, desc):
         self.__name = name
@@ -19,23 +13,40 @@ class Weapon(Item):
     def __init__(self, weapon):
         name = weapon[0]
         self.__DMG = weapon[1]
-        super().__init__(name, f"This is the {name}: It deals {self.get_DMG()} Damage")
+        super().__init__(name, f"The {name}: It deals {self.get_DMG()} Damage")
     def get_DMG(self):
         return self.__DMG
-    
+
 class Armour(Item):
-    def __init__(self, names, hp):
-        name = names[random.randint(0, len(names)-1)]
-        super().__init__(name, f"This is The {name}: It adds {hp} HP")
-        self.__hp = hp
-        
-    def get_hp(self):
+
+    def __init__(self, type):
+        type_1 = ("Blanket", 50)                #name, hp
+        type_2 = ("Cat Disguise", 100)
+        type_3 = ("Typical School Uniform", 200)
+        self.type = {
+            1: type_1,
+            2: type_2,
+            3: type_3,
+        }.get(type)
+        super().__init__(self.type[0], f"The {self.type[0]}: It adds {self.type[1]} HP")
+        self.__hp = self.type[1]
+
+    def get_def(self):
         return self.__hp
     
 class HealingItem(Item):
-    def __init__(self, name, heal_amount):
-        super().__init__(name, f"This is a {name}: Restores {heal_amount} HP.")
-        self.__heal_amount = heal_amount
+    def __init__(self, type):
+        type_1 = ("Small Healing Flask", 50) #Name, Healing amount
+        type_2 = ("Medium Healing Flask", 100)
+        type_3 = ("Large Healing Flask", 150)
+        self.type = {
+            1: type_1,
+            2: type_2,
+            3: type_3
+        }.get(type)
+
+        super().__init__(self.type[0], f"A {self.type[0]}: Restores {self.type[1]} HP.")
+        self.__heal_amount = self.type[1]
         
     def get_heal(self):
         return self.__heal_amount
@@ -50,4 +61,3 @@ class CreateRandomWeapon():
     }
     def make_weapon(self):
         return Weapon(self.weapon_names[self.chosen_weapon][random.randint(0, len(self.weapon_names[self.chosen_weapon])-1)])
-

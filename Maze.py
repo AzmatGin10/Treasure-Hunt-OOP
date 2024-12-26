@@ -29,16 +29,13 @@ from collections import deque
 #player, enemy, chests, choose start, choose end position 
 #start pos = position of generation
 class Maze:
-    def __init__(self, player, enemy, mazeSize):
-        self.player = player
-        self.enemy = enemy
+    def __init__(self, mazeSize):
         self.mazeSize = mazeSize
-        self.startX = 2*random.randint(0, self.mazeSize//2 - 1) + 1
-        self.startY = 2*random.randint(0, self.mazeSize//2 - 1) + 1
+        self.startX, self.startY = 2*random.randint(0, self.mazeSize//2 - 1) + 1, 2*random.randint(0, self.mazeSize//2 - 1) + 1
         self.maze = self.Generate()
         self.min_distance = self.mazeSize//2
-        self.exitX = None
-        self.exitY = None
+        self.exitX, self.exitY  = None, None
+    
         self.chestweights = [
             #C   S   G
             [90, 10, 0],  #0
@@ -49,11 +46,14 @@ class Maze:
         ]
 
         self.level = 0
+
         self.enclosed_areas = None
 
     def CleanUp(self):
         self.maze = self.Generate()
+
     def Generate(self):
+
         directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]
         maze = [[True]*self.mazeSize for x in range(self.mazeSize)]
         
@@ -97,6 +97,7 @@ class Maze:
     [True, True, False, "@", False, True, True]
 ]
         return BossRoom
+    
     def EndPos(self):
         directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
         bfs_queue = deque([(self.startX, self.startY)])
@@ -163,6 +164,7 @@ class Maze:
             final_maze.append(converted_row)
         for row in final_maze:
             print("  ".join(x for x in row))
+
     def SpawnEnemy(self):
         maze = self.maze
         no_of_enemies = self.mazeSize//5
@@ -196,6 +198,7 @@ class Maze:
             if len(result) == no_of_chests:
                 break
         return result    
+    
     def PlayerExplore(self):
         #set up maze and generate needed assets
         enemies = self.SpawnEnemy()
@@ -262,11 +265,13 @@ class Maze:
                     self.maze[playerY][playerX] = "◈"
                     clear_console()
                     self.PrintMaze(self.maze)
+
             if (playerX, playerY) == (self.exitX, self.exitY):
                 print("Well done! You have completed the maze!")
                 break
+
             if (playerX, playerY) in chest_positions:
-                
+                #will need to have items and stuff soon
                 input("You found a Chest! You opened it and found...")
                 if (playerX, playerY) == key:
                     input("A key!⚿ You can now Leave!")
@@ -274,8 +279,7 @@ class Maze:
                 else:
                     input("Nothing...")
 
-            
-maze = Maze("", "", 13)
+maze = Maze(13)
 maze.PlayerExplore()
 
 
