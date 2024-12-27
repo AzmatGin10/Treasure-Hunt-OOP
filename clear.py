@@ -7,4 +7,10 @@ def clear_console():
     else:
         os.system("clear")  
 
-clear_console()
+thing = {
+    "name" : [1, 2, 3],
+    "Weee" : [1, 6, 3]
+}
+key = list(thing.keys())[1]
+print(key)
+

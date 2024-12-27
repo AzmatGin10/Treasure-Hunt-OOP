@@ -58,7 +58,7 @@ class ChooseActionState(BaseCombatState):
                 "Defend",
                 "View Player",
                 "View Enemy",
-                "Items",
+                "Loadout",
             ]
         ).ask()
         return move

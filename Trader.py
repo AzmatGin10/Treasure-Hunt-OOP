@@ -107,7 +107,7 @@ class Trader():
         else:
             return self.events()
 
-#trader = Trader("Hanayome")
+trader = Trader("Hanayome")
 #trader.give_intro()
 #trader.events()
 

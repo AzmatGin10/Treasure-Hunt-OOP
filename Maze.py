@@ -2,8 +2,8 @@ import random
 from clear import clear_console
 import getch 
 from collections import deque 
-
-
+from Items import CreateRandomWeapon, Weapon, Armour, HealingItem, Item
+from CombatEntities import Player, Enemy, Boss
 #adding random enemies to the maze
 #number of enemies will be dependent of the maze sieze
 #function will only return a set of co ordinates so it wont be displayed on map
@@ -22,8 +22,8 @@ from collections import deque
 # in those, dish out the probabilities of chest types 
 # itll be a tuple of position and chest type
 # 1) write a function for number of chests, getting the tupled position and chests type too in one go
-# in main explor function, fimple for loop which changed all position to C, S or G based on if , 1 or 2
-# 
+# in main explore function, fimple for loop which changed all position to C, S or G based on if 0, 1 or 2
+
 
 
 #player, enemy, chests, choose start, choose end position 
@@ -199,12 +199,35 @@ class Maze:
                 break
         return result    
     
+    def generate_chest_loot(self, type):
+
+        items = []
+        if type == 0:
+            items.append(CreateRandomWeapon(1).make_weapon())
+            items.append(CreateRandomWeapon(0).make_weapon())
+            items.append(CreateRandomWeapon(0).make_weapon())
+            items.append(Armour(0))
+            items.append(HealingItem(0))
+        if type == 1:
+            items.append(CreateRandomWeapon(1).make_weapon())
+            items.append(CreateRandomWeapon(2).make_weapon())
+            items.append(CreateRandomWeapon(2).make_weapon())
+            items.append(Armour(1))
+            items.append(HealingItem(1))
+        if type == 2:
+            items.append(CreateRandomWeapon(3).make_weapon())
+            items.append(CreateRandomWeapon(3).make_weapon())
+            items.append(CreateRandomWeapon(2).make_weapon())
+            items.append(Armour(2))
+            items.append(HealingItem(2))
+        return items
+    def view_chest(self, chest):
+        pass
     def PlayerExplore(self):
         #set up maze and generate needed assets
         enemies = self.SpawnEnemy()
         self.EndPos()
         chests = self.Chests()
-        chest_positions = [x[0] for x in chests]
         playerX, playerY = self.startX, self.startY
         
         #validation 
@@ -217,13 +240,15 @@ class Maze:
         have_key = False
         self.maze[self.startY][self.startX] = "◈"
         self.maze[self.exitY][self.exitX] = "E"
+        chest_type = {}
         for x in chests:
             chestX, chestY = x[0][0], x[0][1]
             self.maze[chestY][chestX] = "T"
-        key =  random.choice(chest_positions)
+            chest_type[(chestX, chestY)] = x[1]
+        key =  random.choice(list(chest_type.keys()))
         input("Note: '◈' is the player\n'E' is the exit\nenemies are random and invisible\n'T' is Treasure")
-        
         #maze exploration while loop
+
         while True:
             clear_console()
             
@@ -234,7 +259,7 @@ class Maze:
                     clear_console()
                     input("You encountered an enemy!\nGet ready for Combat!")
                     enemies.remove((playerX, playerY))
-                    #initialise combat
+                    #initialise combat also use import time
             if PlayerInput == "w":
                 if IsValidMove(self.maze, playerX, playerY-1):
                     self.maze[playerY][playerX] = False
@@ -270,9 +295,14 @@ class Maze:
                 print("Well done! You have completed the maze!")
                 break
 
-            if (playerX, playerY) in chest_positions:
+            if (playerX, playerY) in chest_type:
                 #will need to have items and stuff soon
+                type = chest_type[(playerX, playerY)]
+                input(type)
+                chest_items = self.generate_chest_loot(type)
+                input([item.get_name() for item in chest_items])
                 input("You found a Chest! You opened it and found...")
+                #for x in chest_positions:
                 if (playerX, playerY) == key:
                     input("A key!⚿ You can now Leave!")
                     have_key = True
@@ -280,7 +310,9 @@ class Maze:
                     input("Nothing...")
 
 maze = Maze(13)
+
 maze.PlayerExplore()
+
 
 
 
