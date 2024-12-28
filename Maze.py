@@ -1,9 +1,12 @@
 import random
 from clear import clear_console
 import getch 
+from rich import print
 from collections import deque 
 from Items import CreateRandomWeapon, Weapon, Armour, HealingItem, Item
 from CombatEntities import Player, Enemy, Boss
+import questionary
+import CombatTurnStateMachine
 #adding random enemies to the maze
 #number of enemies will be dependent of the maze sieze
 #function will only return a set of co ordinates so it wont be displayed on map
@@ -24,7 +27,7 @@ from CombatEntities import Player, Enemy, Boss
 # 1) write a function for number of chests, getting the tupled position and chests type too in one go
 # in main explore function, fimple for loop which changed all position to C, S or G based on if 0, 1 or 2
 
-
+player = Player("Ryan", 200, 20, 100)
 
 #player, enemy, chests, choose start, choose end position 
 #start pos = position of generation
@@ -166,6 +169,7 @@ class Maze:
             print("  ".join(x for x in row))
 
     def SpawnEnemy(self):
+
         maze = self.maze
         no_of_enemies = self.mazeSize//5
         enemy_locations = []
@@ -221,8 +225,102 @@ class Maze:
             items.append(Armour(2))
             items.append(HealingItem(2))
         return items
-    def view_chest(self, chest):
-        pass
+    def view_chest(self, items):
+            clear_console()
+            if len(items) == 0:
+                pass
+            
+            print("Chest Contents:")
+            
+            weapons = [item for item in items if isinstance(item, Weapon)]
+            display_weapons = [item.get_desc() for item in items if isinstance(item, Weapon)]
+            for item in items:
+                print(item.get_desc())
+                    
+            response = questionary.select(
+                "What would you like to do?",
+                choices=[
+                    "Select from Weapons",
+                    "Pick up Armour",
+                    "Pick up Healing Item",
+                    "Pick up all",
+                    "Check self",
+                    "Return to maze"
+                ]
+            ).ask()
+            if response == "Select from Weapons":
+                clear_console()
+                response = questionary.select(
+                    "Which weapon would you like pick up?",
+                    choices=display_weapons
+                ).ask()
+                chosen_weapon = weapons[display_weapons.index(response)]
+                try:
+                    player.pick_up(chosen_weapon)
+                    items.remove(chosen_weapon)
+                    print(f"You picked up [bold red]{chosen_weapon.get_name()}[/bold red]")
+                    PlayerInput = getch.getch()
+                    if PlayerInput:
+                        return self.view_chest(items)
+                except:
+                    print("[bold red]You do not have enough space in your inventory to perform this action![/bold red]")
+                    PlayerInput = getch.getch()
+                    if PlayerInput:
+                        return self.view_chest(items)
+                
+            elif response == "Pick up Armour":
+                clear_console()
+                for item in items:
+                    if isinstance(item, Armour):
+                        try:
+                            player.pick_up(item)
+                            items.remove(item)
+                            print(f"You picked up [bold purple]{item.get_name()}[/bold purple]")
+                            PlayerInput = getch.getch()
+                            if PlayerInput:
+                                return self.view_chest(items)
+                        except:
+                            print("[bold red]You do not have enough space in your inventory to perform this action![/bold red]")
+                            PlayerInput = getch.getch()
+                            if PlayerInput:
+                                return self.view_chest(items)
+            elif response == "Pick up Healing Item":
+                clear_console()
+                for item in items:
+                    if isinstance(item, HealingItem):
+                        try:
+                            player.pick_up(item)
+                            items.remove(item)
+                            print(f"You picked up [bold blue]{item.get_name()}[/bold blue]")
+                            PlayerInput = getch.getch()
+                            if PlayerInput:
+                                return self.view_chest(items)
+                        except:
+                            print("[bold red]You do not have enough space in your inventory to perform this action![/bold red]")
+                            PlayerInput = getch.getch()
+                            if PlayerInput:
+                                return self.view_chest(items)
+                
+            elif response == "Pick up all":
+                clear_console()
+                try:
+                    for item in items:
+                        player.pick_up(item)
+                    print("You picked everything up!")   
+                    PlayerInput = getch.getch()
+                    if PlayerInput:
+                        pass
+                except:
+                    print("[bold red]You do not have enough space in your inventory to perform this action![/bold red]")
+                    PlayerInput = getch.getch()
+                    if PlayerInput:
+                        return self.view_chest(items)
+            elif response == "Check self":
+                player.loadout()
+                return self.view_chest(items)
+            else:
+                pass
+
     def PlayerExplore(self):
         #set up maze and generate needed assets
         enemies = self.SpawnEnemy()
@@ -298,18 +396,19 @@ class Maze:
             if (playerX, playerY) in chest_type:
                 #will need to have items and stuff soon
                 type = chest_type[(playerX, playerY)]
-                input(type)
+                
                 chest_items = self.generate_chest_loot(type)
-                input([item.get_name() for item in chest_items])
-                input("You found a Chest! You opened it and found...")
-                #for x in chest_positions:
-                if (playerX, playerY) == key:
-                    input("A key!⚿ You can now Leave!")
-                    have_key = True
-                else:
-                    input("Nothing...")
 
-maze = Maze(13)
+                open_chest = questionary.confirm("You found a chest! Would you like to Open it?").ask()
+                if open_chest:
+                    self.view_chest(chest_items)
+                    if (playerX, playerY) == key:
+                        input("In a corner of the Chest you found A key!⚿ You can now Leave!")
+                        have_key = True
+                else:
+                    pass
+
+maze = Maze(21)
 
 maze.PlayerExplore()
 

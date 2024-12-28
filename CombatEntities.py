@@ -6,6 +6,7 @@ from BaseEntity import Entity
 from Items import Item, Weapon, Armour, HealingItem, CreateRandomWeapon
 from clear import clear_console
 import getch 
+import random
 console = Console()
 
 class Player(Entity):
@@ -19,23 +20,19 @@ class Player(Entity):
             if self.currentweapon == "":
                 self.set_DMG(item.get_DMG())
                 self.currentweapon = item
-                self.inventory.append(item)
             else:
                 self.set_DMG(self.currentweapon.get_DMG()*-1)
                 self.set_DMG(item.get_DMG())
                 self.currentweapon = item
-                self.inventory.append(item)
         elif type(item) == Armour:
             if self.currentarmour == "":
                 self.set_hp(item.get_def())
                 self.currentarmour = item
-                self.inventory.append(item)
                 
             else:
                 self.set_hp(self.currentarmour.get_def()*-1)
                 self.set_hp(item.get_def())
                 self.currentarmour = item
-                self.inventory.append(item)
                 
         else:
             input("This is not a compatible usage of the equip function")
@@ -43,7 +40,7 @@ class Player(Entity):
         
         pass
     def pick_up(self, object):
-        if len(self.inventory)<=10:
+        if len(self.inventory)<15:
             self.inventory.append(object)
         else:
             raise Exception("Inventory is already full")
@@ -91,34 +88,57 @@ class Player(Entity):
         
         if response == "Check Current Loadout":
             clear_console()
-            print(f"Your current Weapon is: [bold red]{self.currentweapon.get_desc()}[/bold red]\nYour current Armour is: [bold purple]{self.currentarmour.get_desc()}[/bold purple]")
+            if self.currentweapon == "":
+                print("You currently have no weapons equiped!")
+            if self.currentweapon:
+                print(f"Your current Weapon is: [bold red]{self.currentweapon.get_desc()}[/bold red]")
+            if self.currentarmour == "":
+                print("You currently have no armour equiped!")
+
+            if self.currentarmour:
+                print(f"Your current Armour is: [bold purple]{self.currentarmour.get_desc()}[/bold purple]")
             PlayerInput = getch.getch()
             if PlayerInput:
                 return self.loadout()
             
         elif response == "Check Items":
             clear_console()
+            items = []
             for item in self.inventory:
                 if isinstance(item, HealingItem):
-                    print(f"[bold blue]{item.get_desc()}[/bold blue]")
+                    items.append(item)
+            if len(items) == 0:
+                print("Nothing to see here...")
+            for item in items:
+                print(f"[bold blue]{item.get_desc()}[/bold blue]")
             PlayerInput = getch.getch()
             if PlayerInput:
                 return self.loadout()
         elif response == "Check Weapons":
             clear_console()
+            weapons = []
             for item in self.inventory:
-                if isinstance(item, Weapon):
-                    print(f"[bold red]{item.get_desc()}[/bold red]")
+                if isinstance(item, Weapon) and item != self.currentweapon:
+                    weapons.append(item)
+            if len(weapons) == 0:
+                print("Nothing to see here...")
+            for item in weapons:
+                print(f"[bold red]{item.get_desc()}[/bold red]")
             PlayerInput = getch.getch()
-            if PlayerInput:
+            if PlayerInput == '\n' or PlayerInput == '\r':
                 return self.loadout()
         elif response == "Check Armour":
             clear_console()
+            armour = []
             for item in self.inventory:
-                if isinstance(item, Armour):
-                    print(f"[bold purple]{item.get_desc()}[/bold purple]")
+                if isinstance(item, Armour) and item != self.currentarmour:
+                    armour.append(item)
+            if len(armour) == 0:
+                print("Nothing to see here...")
+            for item in armour:
+                print(f"[bold purple]{item.get_desc()}[/bold purple]")
             PlayerInput = getch.getch()
-            if PlayerInput:
+            if PlayerInput == '\n' or  PlayerInput == '\r':
                 return self.loadout()
         if response == "Equip from inventory":
             clear_console()
@@ -134,12 +154,22 @@ class Player(Entity):
             ).ask()
             if response == "Weapon":
                 clear_console()
-                print(f"Your current Weapon is: [bold red]{self.currentweapon.get_desc()}[/bold red]")
-                weapons = [item for item in self.inventory if isinstance(item, Weapon)]
-                choices = [item.get_desc() for item in self.inventory if isinstance(item, Weapon)]
+                if self.currentweapon == "":
+                    print("You currently have no weapons equiped!")
+                
+                else:
+                    print(f"Your current Weapon is: [bold red]{self.currentweapon.get_desc()}[/bold red]")
+                
+                weapons = [item for item in self.inventory if isinstance(item, Weapon) and item != self.currentweapon]
+                choices = [item.get_desc() for item in self.inventory if isinstance(item, Weapon) and item != self.currentweapon]
+                if len(weapons) == 0:
+                    print("Nothing to see here...") 
+                    PlayerInput = getch.getch()
+                    if PlayerInput:
+                        return self.loadout()
                 response = questionary.select(
                     "Available Weapons...",
-                    choices=[item.get_desc() for item in self.inventory if isinstance(item, Weapon)]
+                    choices=[item.get_desc() for item in self.inventory if isinstance(item, Weapon) and item != self.currentweapon]
                 ).ask()
                 clear_console()
                 chosen_weapon = weapons[choices.index(response)]
@@ -150,9 +180,17 @@ class Player(Entity):
                     return self.loadout()
             elif response == "Armour":
                 clear_console()
-                print(f"Your current Armour is: [bold purple]{self.currentarmour.get_desc()}[/bold purple]")
+                if self.currentarmour == "":
+                    print("You currently have no armour equiped!")
+                else:
+                    print(f"Your current Armour is: [bold purple]{self.currentarmour.get_desc()}[/bold purple]")
                 armours = [item for item in self.inventory if isinstance(item, Armour)]
                 choices = [item.get_desc() for item in self.inventory if isinstance(item, Armour)]
+                if len(armours) == 0:
+                    print("Nothing to see here...") 
+                    PlayerInput = getch.getch()
+                    if PlayerInput:
+                        return self.loadout()
                 response = questionary.select(
                     "Available Armour...",
                     choices=[item.get_desc() for item in self.inventory if isinstance(item, Armour)]
@@ -169,8 +207,8 @@ class Player(Entity):
                 return self.loadout()
         if response == "Drop Items":
             if len(self.inventory) > 0:
-                items = [x for x in self.inventory]
-                choices = [item.get_name() for item in self.inventory]
+                items = [item for item in self.inventory if item != self.currentarmour and item != self.currentweapon]
+                choices = [item.get_name() for item in self.inventory if item != self.currentarmour and item != self.currentweapon]
                 choices.append("Back")
                 response = questionary.select(
                     "What would you like to drop",
@@ -194,7 +232,19 @@ class Player(Entity):
 class Enemy(Entity):
     def __init__(self, name, hp, DMG, stamina):
         super().__init__(name, hp, DMG, stamina)
-    
+    def defend(self):
+        self.set_guard(True)
+        
+    def random_move(self):
+        move_prob = [70, 20, 10] # attack defend or nothing
+        prob_total = 100 - random.randint(0, 100)
+        i = len(move_prob) - 1
+        for prob in move_prob:
+            if prob_total <= move_prob[i]:
+                return i
+            else:
+                prob_total -= move_prob[i]
+                i -= 1
 class Boss(Entity):
     def __init__(self, name, hp, DMG, stamina):
         super().__init__(name, hp, DMG, stamina)
@@ -206,7 +256,7 @@ class Boss(Entity):
         player.set_hp(self.get_DMG()*-5 if not player.get_guard() else self.get_DMG()*-2)  
 
 player = Player("Ryan", 200, 20, 100)
-enemy = Player("Skeleton", 100, 10, 100)
+enemy = Enemy("Skeleton", 100, 10, 100)
 boss = Boss("Ogre", 500, 20, 10)
 random_dagger = CreateRandomWeapon(0)
 random_stick = CreateRandomWeapon(3)
@@ -216,34 +266,14 @@ armour1 = Armour(2)
 armour2 = Armour(1)
 Heal1 = HealingItem(2)
 player.pick_up(Heal1)
-player.equip(dagger1)
-player.equip(dagger2)
-player.equip(armour1)
-player.equip(armour2)
+player.pick_up(dagger1)
+player.pick_up(dagger2)
+player.pick_up(armour1)
+player.pick_up(armour2)
+print(enemy.random_move())
 
 
 #print(player.view_stats())
 #print(player.currentweapon.get_desc())
 #player.loadout()
 
-""""
-while True:
-    userInput = input("1 is player attack boss, 2 is boss attack player, 3 is a big attack")
-
-    if userInput == "1":
-        player.attack(boss)
-        print(boss.get_hp())
-    if userInput == "2":
-        boss.attack(player)
-        print(player.get_hp())
-    if userInput == "3":
-        boss.big_attack(player)
-        print(player.get_hp())
-    if player.get_hp() <= 0:
-        print("Player has died")
-        break
-    if boss.get_hp() <= 0:
-        print("boss has died")
-        break
-    
-"""

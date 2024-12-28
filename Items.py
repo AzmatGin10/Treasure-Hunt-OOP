@@ -15,6 +15,13 @@ class Weapon(Item):
         name = weapon[0]
         self.__DMG = weapon[1]
         super().__init__(name, f"The {name}: It deals {self.get_DMG()} Damage")
+        self.lore = {
+
+
+
+
+
+        }
     def get_DMG(self):
         return self.__DMG
 
@@ -31,7 +38,14 @@ class Armour(Item):
         }.get(type)
         super().__init__(self.type[0], f"The {self.type[0]}: It adds {self.type[1]} HP")
         self.__hp = self.type[1]
+        self.lore = {
 
+
+
+
+
+            
+        }
     def get_def(self):
         return self.__hp
     

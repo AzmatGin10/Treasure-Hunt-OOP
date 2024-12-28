@@ -112,3 +112,5 @@ trader = Trader("Hanayome")
 #trader.events()
 
 
+
+
