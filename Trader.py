@@ -7,6 +7,8 @@
 import questionary
 from rich import print
 from clear import clear_console
+from CombatEntities import Player
+import time
 clear_console()
 class Trader():
     def __init__(self, name):
@@ -14,7 +16,8 @@ class Trader():
         self.quests = []
     def give_intro(self):
         print(f"[bold green]Hello Travellor[/bold green]! My name is [bold blue]{self.name}[/bold blue]. [bold yellow]The Worlds best Tradesman[/bold yellow]. Whatever you want, I'll cater! Whether it be [bold red]strengthening yourself[/bold red], buying a few [bold green]safety precautions[/bold green] or finding some neat [bold purple]quests[/bold purple] Im here for you! If a [bold blue]chat[/bold blue] is all you need, Ill be here too. Pleasure to make your aquaintance")
-    def events(self):
+    def events(self, player):
+        
         action = questionary.select(
             "What would you like to do?",
             choices= [
@@ -28,19 +31,23 @@ class Trader():
         if action == "Strengthen self":
             clear_console()
             print("Ah, seeking greater power! Lets see what I can do for you...")
-            self.buy_arms("Place holder")
+            self.buy_arms(player)
+            return self.events(player)
         elif action == "Potions":
             clear_console()
             print("Looking for potions, are you? I've got just the thing!")
-            #self.potions()
+            self.buy_potions(player)
+            return self.events(player)
         elif action == "Quests":
             clear_console()
             print("Ah, A thirst for adventure compels you ey? Let me sort you out!")
-            self.quest_giver_event()
+            self.quest_giver_event(player)
+            return self.events(player)
         elif action == "Talk":
             clear_console()
             print("[bold]A chat it is!")
             self.talk_event()
+            return self.events(player)
         else:
             clear_console()
             print("I see.. Maybe next time!")
@@ -53,6 +60,7 @@ class Trader():
                 "What are Raiju?",
                 "Why do people keep going into mazes?",
                 "How do we get rid of the Raiju?",
+                "How do I get Gold?",
                 "Hello!",
                 "Back"
                 ]
@@ -77,8 +85,13 @@ class Trader():
             input()
             clear_console()
             return self.talk_event()
+        elif response == "How do I get Gold?":
+            print("Well, without a job, theres only one way. Being a Maze Hunter. We do not know why but, The Raiju love carrying around gold... If your considering going, be careful yeah?")
+            input()
+            
+            return self.talk_event()
         elif response == "Hello!":
-            print("[bold purple] Hi?...... I know i said I'd chat with you but, this really isnt what i had in mind")
+            print("[bold purple]Hi?...... I know i said I'd chat with you but, this really isnt what i had in mind")
             input()
             clear_console()
             return self.talk_event()
@@ -86,8 +99,9 @@ class Trader():
             clear_console()
             return self.events()
 
-    def quest_giver_event(self):
+    def quest_giver_event(self, player):
         print("Here are the currently availabe quests.")
+
     def buy_arms(self, player):
         response = questionary.select(
             "Have a look!",
@@ -97,8 +111,6 @@ class Trader():
             "Back"
             ]
 
-
-
         ).ask()
         if response == "Weaponry":
             pass
@@ -106,10 +118,12 @@ class Trader():
             pass
         else:
             return self.events()
-
+    def buy_potions(self, player):
+        pass
+player = Player("Izhaan", 100, 10, 100)
 trader = Trader("Hanayome")
-#trader.give_intro()
-#trader.events()
+trader.give_intro()
+trader.events(player)
 
 
 

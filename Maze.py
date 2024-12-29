@@ -6,7 +6,8 @@ from collections import deque
 from Items import CreateRandomWeapon, Weapon, Armour, HealingItem, Item
 from CombatEntities import Player, Enemy, Boss
 import questionary
-import CombatTurnStateMachine
+from CombatTurnStateMachine import CombatTurnStateMachine
+import time
 #adding random enemies to the maze
 #number of enemies will be dependent of the maze sieze
 #function will only return a set of co ordinates so it wont be displayed on map
@@ -27,18 +28,17 @@ import CombatTurnStateMachine
 # 1) write a function for number of chests, getting the tupled position and chests type too in one go
 # in main explore function, fimple for loop which changed all position to C, S or G based on if 0, 1 or 2
 
-player = Player("Ryan", 200, 20, 100)
 
 #player, enemy, chests, choose start, choose end position 
 #start pos = position of generation
 class Maze:
-    def __init__(self, mazeSize):
+    def __init__(self, mazeSize, player):
         self.mazeSize = mazeSize
         self.startX, self.startY = 2*random.randint(0, self.mazeSize//2 - 1) + 1, 2*random.randint(0, self.mazeSize//2 - 1) + 1
         self.maze = self.Generate()
         self.min_distance = self.mazeSize//2
         self.exitX, self.exitY  = None, None
-    
+        self.player = player
         self.chestweights = [
             #C   S   G
             [90, 10, 0],  #0
@@ -48,7 +48,7 @@ class Maze:
             [30, 50, 20]  #4
         ]
 
-        self.level = 0
+        self.level = 1
 
         self.enclosed_areas = None
 
@@ -323,6 +323,7 @@ class Maze:
 
     def PlayerExplore(self):
         #set up maze and generate needed assets
+        clear_console()
         enemies = self.SpawnEnemy()
         self.EndPos()
         chests = self.Chests()
@@ -346,8 +347,8 @@ class Maze:
         key =  random.choice(list(chest_type.keys()))
         input("Note: '◈' is the player\n'E' is the exit\nenemies are random and invisible\n'T' is Treasure")
         #maze exploration while loop
-
-        while True:
+        Running = True
+        while Running:
             clear_console()
             
             self.PrintMaze(self.maze)
@@ -355,9 +356,29 @@ class Maze:
             for enemy in enemies:
                 if playerX == enemy[0] and playerY == enemy[1]:
                     clear_console()
-                    input("You encountered an enemy!\nGet ready for Combat!")
+                    print("You encountered an enemy!\nGet ready for Combat!")
                     enemies.remove((playerX, playerY))
-                    #initialise combat also use import time
+                    enemy = Enemy(self.level)
+                    state = CombatTurnStateMachine(self.player, enemy)
+                    time.sleep(3)
+                    while True:
+                        status = state.Check_Battle_Status()
+                        if status == "win":
+                            player.reset()
+                            player.get_gold(enemy)
+                            print(f"For fighting {enemy.get_name()}, you were awarded {enemy.gold} Gold!")
+                            time.sleep(3)
+                            break
+                        if status == "lose":
+                            player.reset()
+                            Running = False
+                            time.sleep(3)
+                            
+                            break
+                        player_move = state.Choose()
+                        state.TransitionState()
+                        state.Implement(player_move)
+                    
             if PlayerInput == "w":
                 if IsValidMove(self.maze, playerX, playerY-1):
                     self.maze[playerY][playerX] = False
@@ -408,7 +429,9 @@ class Maze:
                 else:
                     pass
 
-maze = Maze(21)
+player = Player("Ryan", 200, 20, 100)
+
+maze = Maze(19, player)
 
 maze.PlayerExplore()
 

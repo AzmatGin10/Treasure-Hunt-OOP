@@ -15,6 +15,7 @@ class Player(Entity):
         self.currentweapon = ""
         self.currentarmour = ""
         self.inventory = []
+        self.gold = 0
     def equip(self, item):
         if type(item) == Weapon:
             if self.currentweapon == "":
@@ -44,13 +45,23 @@ class Player(Entity):
             self.inventory.append(object)
         else:
             raise Exception("Inventory is already full")
+    def get_gold(self, enemy):
+        self.gold += enemy.gold 
+    def spend_gold(self, amount):
+        if self.gold >= amount:
+            self.gold -= amount
+        else:
+            raise Exception("Not enough Gold")
     def drop_item(self, object):
         if object in self.inventory:
             self.inventory.remove(object)
         else:
             raise Exception("An issue occured")
     def heal(self, item):
-        self.set_hp(item)
+        self.set_hp(item.get_heal())
+        self.inventory.remove(item)
+        if self.get_hp() > self.get_max_hp():
+            self.normalise_hp()
     def get_max_health(self):
         if self.currentarmour != "":
             return self.get_max_hp() + self.currentarmour.get_def()
@@ -74,6 +85,7 @@ class Player(Entity):
             progress.add_task("[bold purple]DMG", total=enemy.get_max_DMG(), completed=enemy.get_DMG())
     def loadout(self):
         clear_console()
+        print(f"You currently have {self.gold} Gold!")
         response = questionary.select(
             "What would you like to check?",
             choices=[
@@ -230,7 +242,42 @@ class Player(Entity):
         else:
             pass
 class Enemy(Entity):
-    def __init__(self, name, hp, DMG, stamina):
+    def __init__(self, level):
+        if level == 0:
+            names = ["Skeleton", "Goblin", "Skeleton with a Helmet!"]
+            name = names[random.randint(0, len(names)-1)]
+            hp = 200
+            DMG = 10
+            stamina = 100
+            self.gold = 10
+        if level == 1:
+            names = ["Large Skeleton", "Ogre", "Shrouded Figure"]
+            name = names[random.randint(0, len(names)-1)]
+            hp = 300
+            DMG = 20
+            stamina = 100
+            self.gold = 50
+        if level == 2:
+            names = ["Sneaky Goblin", "Skeleton Warrior", "Green Laekan"]
+            name = names[random.randint(0, len(names)-1)]
+            hp = 400
+            DMG = 20
+            stamina = 100
+            self.gold = 100
+        if level == 3:
+            names = ["Undead Corpse", "Faller", "Vampire", "Beast"]
+            name = names[random.randint(0, len(names)-1)]
+            hp = 500
+            DMG = 30
+            stamina = 150
+            self.gold = 200
+        if level == 4:
+            names = ["Destroyer", "Sary Never Clear", "Grief", "Ashquan", "Kaido"]
+            name = names[random.randint(0, len(names)-1)]
+            hp = 1000
+            DMG = 50
+            stamina = 200
+            self.gold = 500
         super().__init__(name, hp, DMG, stamina)
     def defend(self):
         self.set_guard(True)
@@ -245,8 +292,15 @@ class Enemy(Entity):
             else:
                 prob_total -= move_prob[i]
                 i -= 1
+    
+        
 class Boss(Entity):
-    def __init__(self, name, hp, DMG, stamina):
+    def __init__(self):
+        names = ["Leader of The Raiju, Nosferatu Zodd", "Ashen One", "Bob"]
+        name = names[random.randint(0, len(names)-1)] 
+        hp = 100
+        DMG = 10
+        stamina = 100
         super().__init__(name, hp, DMG, stamina)
     def heal(self):
         self.set_hp(10)
@@ -256,8 +310,10 @@ class Boss(Entity):
         player.set_hp(self.get_DMG()*-5 if not player.get_guard() else self.get_DMG()*-2)  
 
 player = Player("Ryan", 200, 20, 100)
-enemy = Enemy("Skeleton", 100, 10, 100)
-boss = Boss("Ogre", 500, 20, 10)
+enemy = Enemy(1)
+boss = Boss()
+
+print(player.gold)
 random_dagger = CreateRandomWeapon(0)
 random_stick = CreateRandomWeapon(3)
 dagger1 = random_dagger.make_weapon()
@@ -270,7 +326,7 @@ player.pick_up(dagger1)
 player.pick_up(dagger2)
 player.pick_up(armour1)
 player.pick_up(armour2)
-print(enemy.random_move())
+#print(enemy.random_move())
 
 
 #print(player.view_stats())

@@ -38,6 +38,12 @@ class Entity():
         return self.__max_DMG
     def get_max_stamina(self):
         return self.__max_stamina
+    def normalise_hp(self):
+        self.__hp = self.get_max_hp()
+    def reset(self):
+        self.normalise_hp()
+        self.recover()
+        self.tiredcount = 0
     def attack(self, entity):
         if self.tiredcount >= 3:
             self.set_stamina(self.get_stamina()*-1)
