@@ -71,9 +71,9 @@ class CreateRandomWeapon():
         
         self.weapon_names ={
         "dagger" : [("Dagger of Respite", 20), ("Broken Dagger", 10), ("Holy Dagger", 25), ("Daggerfall", 30), ("Ordinary Dagger", 15)],
-        "sword" : [("Silver Sword", 30), ("Broken Sword", 25), ("Sword of The Fallen King", 40), ("Ordinary Sword", 30)],
-        "katana" :  [("Issei no Katana", 40), ("Samurais's Hope", 35), ("Abyssal Blade", 50), ("夜の剣", 55), ("Ordinary Katana", 30) ],
-        "stick" : [("Stick of Doom", 50), ("Brownest Stick", 60), ("Stick of Calamity", 80), ("STICKY situation", 55), ("Simple Stick", 100)]
+        "sword" : [("Silver Sword", 35), ("Broken Sword", 30), ("Sword of The Fallen King", 40), ("Ordinary Sword", 35)],
+        "katana" :  [("Issei no Katana", 50), ("Samurais's Hope", 55), ("Abyssal Blade", 60), ("夜の剣", 55), ("Ordinary Katana", 45) ],
+        "stick" : [("Stick of Doom", 65), ("Brownest Stick", 70), ("Stick of Calamity", 80), ("STICKY situation", 90), ("Simple Stick", 100)]
     }
         self.chosen_weapon = list(self.weapon_names.keys())[self.type]
     def make_weapon(self):

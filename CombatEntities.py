@@ -4,7 +4,7 @@ from rich.progress import Progress
 from rich import print
 from BaseEntity import Entity
 from Items import Item, Weapon, Armour, HealingItem, CreateRandomWeapon
-from clear import clear_console
+from System import clear_console
 import getch 
 import random
 console = Console()

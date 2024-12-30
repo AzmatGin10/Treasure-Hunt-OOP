@@ -331,3 +331,30 @@ each time this occurres an errorcount would be used and if this equates to three
 it would regenerate the maze again and start finding an exit again, this is because the issue of the maze exit fault
 is very uncommon and so simply regeneating befofre showing the maze is a simple but
 quick way to resolve the issue
+
+
+
+###########################################################################################
+#adding random enemies to the maze
+#number of enemies will be dependent of the maze sieze
+#function will only return a set of co ordinates so it wont be displayed on map
+#itll be like a pokemon style combat system
+#enemies can be anyone aslong as its in path and it is not the start position
+#1) filterout the possible posiition of the enemy => check if is False
+#2) remove the player position => simple
+#3) pick a random number of random coordinates based on mazesize => ask people
+#4) store values in initializer => have a array for enemy positions
+#5) make it so if the player lands on these position a combat system will be engaged
+#6) need a smooth transition back into the map
+
+#chest generation plan
+# probability works, just need to hand out all the locations
+# number of chests will be the no of possible locations // 2
+# in those, dish out the probabilities of chest types 
+# itll be a tuple of position and chest type
+# 1) write a function for number of chests, getting the tupled position and chests type too in one go
+# in main explore function, fimple for loop which changed all position to C, S or G based on if 0, 1 or 2
+
+
+#player, enemy, chests, choose start, choose end position 
+#start pos = position of generation

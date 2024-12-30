@@ -1,5 +1,5 @@
 import random
-from clear import clear_console
+from System import clear_console, game_over
 import getch 
 from rich import print
 from collections import deque 
@@ -8,32 +8,11 @@ from CombatEntities import Player, Enemy, Boss
 import questionary
 from CombatTurnStateMachine import CombatTurnStateMachine
 import time
-#adding random enemies to the maze
-#number of enemies will be dependent of the maze sieze
-#function will only return a set of co ordinates so it wont be displayed on map
-#itll be like a pokemon style combat system
-#enemies can be anyone aslong as its in path and it is not the start position
-#1) filterout the possible posiition of the enemy => check if is False
-#2) remove the player position => simple
-#3) pick a random number of random coordinates based on mazesize => ask people
-#4) store values in initializer => have a array for enemy positions
-#5) make it so if the player lands on these position a combat system will be engaged
-#6) need a smooth transition back into the map
-
-#chest generation plan
-# probability works, just need to hand out all the locations
-# number of chests will be the no of possible locations // 2
-# in those, dish out the probabilities of chest types 
-# itll be a tuple of position and chest type
-# 1) write a function for number of chests, getting the tupled position and chests type too in one go
-# in main explore function, fimple for loop which changed all position to C, S or G based on if 0, 1 or 2
 
 
-#player, enemy, chests, choose start, choose end position 
-#start pos = position of generation
 class Maze:
-    def __init__(self, mazeSize, player):
-        self.mazeSize = mazeSize
+    def __init__(self, player):
+        self.mazeSize = 15
         self.startX, self.startY = 2*random.randint(0, self.mazeSize//2 - 1) + 1, 2*random.randint(0, self.mazeSize//2 - 1) + 1
         self.maze = self.Generate()
         self.min_distance = self.mazeSize//2
@@ -48,7 +27,7 @@ class Maze:
             [30, 50, 20]  #4
         ]
 
-        self.level = 1
+        self.level = 0
 
         self.enclosed_areas = None
 
@@ -87,19 +66,6 @@ class Maze:
                 stack.pop()            
 
         return maze
-    
-    def BossRoom(self):
-        BossRoom = [
-    [True, True, True, True, True, True, True],
-    [True, False, False, False, False, False, True],
-    [True, False, False, False, False, False, True],
-    [True, False, False, False, False, False, True],
-    [True, False, False, False, False, False, True],
-    [True, False, False, False, False, False, True],
-    [True, False, False, False, False, False, True],
-    [True, True, False, "@", False, True, True]
-]
-        return BossRoom
     
     def EndPos(self):
         directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
@@ -320,7 +286,14 @@ class Maze:
                 return self.view_chest(items)
             else:
                 pass
-
+    def NextLevel(self):
+        
+        self.startX, self.startY = 2*random.randint(0, self.mazeSize//2 - 1) + 1, 2*random.randint(0, self.mazeSize//2 - 1) + 1
+        self.maze = self.Generate()
+        self.min_distance = self.mazeSize//2
+        self.exitX, self.exitY  = None, None
+        self.enclosed_areas = None
+        
     def PlayerExplore(self):
         #set up maze and generate needed assets
         clear_console()
@@ -345,14 +318,23 @@ class Maze:
             self.maze[chestY][chestX] = "T"
             chest_type[(chestX, chestY)] = x[1]
         key =  random.choice(list(chest_type.keys()))
-        input("Note: '◈' is the player\n'E' is the exit\nenemies are random and invisible\n'T' is Treasure")
+        input("Note: '◈' is the player\n'E' is the exit\nenemies are random and invisible\n'T' is Treasure\nPress 'I' at any time to access your loadout")
         #maze exploration while loop
-        Running = True
-        while Running:
+        
+        alive = True
+        while True:
+            if not alive:
+                
+                clear_console()
+                game_over()
+                break
             clear_console()
             
             self.PrintMaze(self.maze)
+            print(f"LEVEL {self.level}")
             PlayerInput = getch.getch()
+            
+            
             for enemy in enemies:
                 if playerX == enemy[0] and playerY == enemy[1]:
                     clear_console()
@@ -370,15 +352,17 @@ class Maze:
                             time.sleep(3)
                             break
                         if status == "lose":
-                            player.reset()
-                            Running = False
-                            time.sleep(3)
                             
+                            alive = False
+                            time.sleep(3)
                             break
+                            
                         player_move = state.Choose()
                         state.TransitionState()
                         state.Implement(player_move)
-                    
+            if PlayerInput == "i":
+                self.player.loadout()
+                
             if PlayerInput == "w":
                 if IsValidMove(self.maze, playerX, playerY-1):
                     self.maze[playerY][playerX] = False
@@ -411,8 +395,23 @@ class Maze:
                     self.PrintMaze(self.maze)
 
             if (playerX, playerY) == (self.exitX, self.exitY):
+                if self.level == 4:
+                    Boss = questionary.confirm("Warning, The next level is a Boss Battle. Are you sure you want to Continue?").ask()
+                    if Boss:
+                        pass
+                    else:
+                        pass
+
+                self.level += 1
+                self.mazeSize += 4
                 print("Well done! You have completed the maze!")
-                break
+                again = questionary.confirm("Would you like to go to the next level?").ask()
+                if again:
+                    self.NextLevel()
+                    return self.PlayerExplore()
+                else:
+                    break
+                
 
             if (playerX, playerY) in chest_type:
                 #will need to have items and stuff soon
@@ -428,10 +427,10 @@ class Maze:
                         have_key = True
                 else:
                     pass
+            
+player = Player("Ryan", 500, 200, 100)
 
-player = Player("Ryan", 200, 20, 100)
-
-maze = Maze(19, player)
+maze = Maze(player)
 
 maze.PlayerExplore()
 

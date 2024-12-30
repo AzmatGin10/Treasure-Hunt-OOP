@@ -1,6 +1,6 @@
 import questionary
 from CombatEntities import Player, Enemy
-from clear import clear_console
+from System import clear_console
 import getch
 from Items import HealingItem, Weapon, Armour, CreateRandomWeapon
 import random
