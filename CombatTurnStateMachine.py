@@ -1,10 +1,11 @@
 import questionary
-from CombatEntities import Player, Enemy
-from System import clear_console
+from CombatEntities import Player, Enemy, Boss
+from System import clear_console, message, choose_end, good_end
 import getch
 from Items import HealingItem, Weapon, Armour, CreateRandomWeapon
 import random
 import time
+
 #has a player and an enemy
 #takes an input from player and random move from enemy
 #needs a store for all moves
@@ -51,6 +52,22 @@ class BaseCombatState():
             else:
                 prob_total -= probabilitity[i]
                 i -= 1
+    def Random_Attack_Boss_Message(self):
+        probabilitity = [60, 25, 14, 1]
+        prob_total = 100 - random.randint(0, 100)
+        i = len(probabilitity) - 1
+        prompts = {
+            0: f"With the {self.enemy.get_name()} towering over you, you gathered courage and striked their body!",
+            1: f"Finality and purpose overcoming you, You attacked {self.enemy.get_name()}!",
+            2: f"This was the final fight, you must win! You delivered a Strike to The {self.enemy.get_name()}!",
+            3: f"You decided to insult the {self.enemy.get_name()}? ?!?! It worked ?!?!"
+        }
+        for prob in probabilitity:
+            if prob_total <= probabilitity[i]:
+                return prompts[i]
+            else:
+                prob_total -= probabilitity[i]
+                i -= 1
     def Random_Enemy_Message(self):
         probabilitity = [60, 25, 10, 5]
         prob_total = 100 - random.randint(0, 100)
@@ -61,12 +78,50 @@ class BaseCombatState():
             2: f"The {self.enemy.get_name()} lunged at you with intent to harm!",
             3: f"The {self.enemy.get_name()} attacked you unwillingly, with face of Sadness"
         }
+
         for prob in probabilitity:
             if prob_total <= probabilitity[i]:
                 return prompts[i]
             else:
                 prob_total -= probabilitity[i]
                 i -= 1
+
+    def Random_Boss_Message(self):
+        probabilitity = [60, 25, 10, 5]
+        prob_total = 100 - random.randint(0, 100)
+        i = len(probabilitity) - 1
+        prompts = {
+            0: f"With a Single Sword held in their hand, a surge of murderous intent overcame you as The {self.enemy.get_name()} attacked you!",
+            1: f"The {self.enemy.get_name()} charged at you with Tremendous Power",
+            2: f"The {self.enemy.get_name()} pierced you body with a single hair they plucked from their body, ",
+            3: f"The {self.enemy.get_name()} held their sword upwards... A barrage of light cascaded down towards you!"
+        }
+
+        for prob in probabilitity:
+            if prob_total <= probabilitity[i]:
+                return prompts[i]
+            else:
+                prob_total -= probabilitity[i]
+                i -= 1
+
+    def Boss_Defense_Message(self):
+
+        probabilitity = [60, 25, 10, 5]
+        prob_total = 100 - random.randint(0, 100)
+        i = len(probabilitity) - 1
+        prompts = {
+            0: f"A cold sweat ran down your body, forcing you into a defensive stance. You felt something big was coming...",
+            1: f"Fear overtook you body as you felt The {self.enemy.get_name()} stare down you soul. You instinctively took a defensive stance",
+            2: f"Theres nothing you can do... Give up... You took a defensive stance.",
+            3: f"Shiver and fear, you cannot win... You took a defensive stance."
+        }  
+        for prob in probabilitity:
+            if prob_total <= probabilitity[i]:
+                return prompts[i]
+            else:
+                prob_total -= probabilitity[i]
+                i -= 1
+                
     def Random_Defense_Message(self):
         probabilitity = [60, 25, 10, 5]
         prob_total = 100 - random.randint(0, 100)
@@ -173,45 +228,85 @@ class ChooseActionState(BaseCombatState):
     def CycleState(self):
         return "implement"
 class ImplementActionState(BaseCombatState):
-    def __init__(self, context, player, enemy):
+    def __init__(self, context, player, enemy, boss):
         super().__init__(context, player, enemy)
+        self.boss = boss
     def OnEnter(self, player_move):
-        enemy_move = self.enemy.random_move()
-        if player_move == "defend":
-            self.player.defend()
-            print(self.Random_Defense_Message())
-            time.sleep(3)
-        if enemy_move == 1:
-            self.enemy.set_guard(True)
-            print(f"{self.enemy.get_name()} went on the defensive!")
-            time.sleep(3)
-        if player_move == "attack":
-            self.player.attack(self.enemy)
-            print(self.Random_Attack_Message())
-            time.sleep(3)
+        if self.boss: #for the boss
+            enemy_move = self.enemy.random_move()
+            if player_move == "defend":
+                self.player.defend()
+                print(self.Boss_Defense_Message())
+                time.sleep(3)
+            if enemy_move == 1:
+                self.enemy.set_guard(True)
+                print(f"{self.enemy.get_name()} slowly brought their sword before them. Providing ample defense against your attacks...")
+                time.sleep(3)
+            if player_move == "attack":
+                self.player.attack(self.enemy)
+                print(self.Random_Attack_Boss_Message())
+                time.sleep(3)
+            if enemy_move == 0:
+                self.enemy.attack(self.player)
+                print(self.Random_Boss_Message())
+                time.sleep(3)
+            if enemy_move == 2:
+                guard = questionary.confirm(f"Warning {self.enemy.get_name()} is about to unleash a big attack! Would you like to activate your guard if it hasnt already been activated?").ask()
+                if guard:
+                    self.player.defend()
+                    self.enemy.big_attack(self.player)
+                    message(f"{self.enemy.get_name()} held out their sword, pointing it towards you and chanted the words...", 0.1)
+                    time.sleep(1)
+                    message("\nBerserk...", 0.3)
+                    message("Before you could see anything, the attack was over... Your decision to guard lowered its devastation", 0.1)
+
+                else:
+                    self.enemy.big_attack(self.player)
+                    message(f"{self.enemy.get_name()} held out their sword, pointing it towards you and chanted the words...", 0.1)
+                    time.sleep(1)
+                    message("\nBerserk...", 0.3)
+                    message("You looked down and noticed a gaping hole in your body...", 0.2)
+                time.sleep(3)
+
+            self.player.set_guard(False)
+            self.enemy.set_guard(False)
+        else: #for all other entities
+            enemy_move = self.enemy.random_move()
+            if player_move == "defend":
+                self.player.defend()
+                print(self.Random_Defense_Message())
+                time.sleep(3)
+            if enemy_move == 1:
+                self.enemy.set_guard(True)
+                print(f"{self.enemy.get_name()} went on the defensive!")
+                time.sleep(3)
+            if player_move == "attack":
+                self.player.attack(self.enemy)
+                print(self.Random_Attack_Message())
+                time.sleep(3)
+            
+            if enemy_move == 0:
+                self.enemy.attack(self.player)
+                print(self.Random_Enemy_Message())
+                time.sleep(3)
         
-        if enemy_move == 0:
-            self.enemy.attack(self.player)
-            print(self.Random_Enemy_Message())
-            time.sleep(3)
+            if enemy_move == 2:
+                print(f"{self.enemy.get_name()} stared at you menacingly... But He didn't seen to do anything?")
+                time.sleep(3)
         
-        if enemy_move == 2:
-            print(f"{self.enemy.get_name()} stared at you menacingly... But He didn't seen to do anything?")
-            time.sleep(3)
-        
-        
-        self.player.set_guard(False)
-        self.enemy.set_guard(False)
+            self.player.set_guard(False)
+            self.enemy.set_guard(False)
         
     def CycleState(self):
         return "choose"
 class CombatTurnStateMachine():
-    def __init__(self, player, enemy):
+    def __init__(self, player, enemy, boss):
         self.player = player
         self.enemy = enemy
+        self.boss = boss
         self.states = {
             "choose" : ChooseActionState(self, player, enemy),
-            "implement" : ImplementActionState(self, player, enemy)
+            "implement" : ImplementActionState(self, player, enemy, boss)
         }
         self.currentstate = "choose"
     def Choose(self):
@@ -236,10 +331,11 @@ class CombatTurnStateMachine():
 
 player = Player("Bob", 200, 20, 100)
 enemy = Enemy(4)
+boss = Boss()
 random_weapon = CreateRandomWeapon(1)
 heal = HealingItem(2)
 player.pick_up(random_weapon.make_weapon())
 player.pick_up(heal)
-state = CombatTurnStateMachine(player, enemy)
+state = CombatTurnStateMachine(player, boss, True)
 
 #for tomorrow, add healing to the loadout, add proper ui for the fighting, add a way for the fight to end

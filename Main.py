@@ -6,6 +6,7 @@
 #Once lvl4 is completed, initiate boss battle
 #if win, have little dialogue and lore and break story and finish => GOOD END
 #IF lose, Have a shocking convo with boss, they can talk, beckons you to join => if you do => hidden end else: die (bad end) 
+
 from CombatEntities import Player, Enemy, Boss
 from Trader import Trader
 import time
@@ -14,9 +15,10 @@ import questionary
 from lobby import Lobby
 from Maze import Maze
 
-
+#add boss battle and choose between maze levels
 
 start = menu()
+
 if start == "starting game":
     clear_console()
     skip = questionary.confirm("Would you like to skip the introduction?").ask()
@@ -33,7 +35,7 @@ if start == "starting game":
         message("Until, a traveller from a distance land full of adventure, arrived in a small village called 'Salé'. A traveller who would change the fate of Tsubaki forever\n", 0.1)
         message("That travellers name was...\n", 0.2)
     name = get_name()
-    player = Player(name, 500, 200, 100)
+    player = Player(name, 200, 20, 100)
     maze = Maze(player)
     trader = Trader()
     message(f"{name}...", 0.2)
@@ -43,8 +45,9 @@ if start == "starting game":
     message("I shall show you their story...\n", 0.08)
     message("A story of ", 0.1)
     message("tragedy ", 0.01)
-    message("and", 0.05)
-    message(" heroism...\n", 0.1)
-    message("Let us begin...", 0.1)
+    message("and", 0.2)
+    message(" heroism...\n", 0.05)
+    message("Let us begin...", 0.3)
+    time.sleep(2)
     lobby = Lobby(player, maze, trader)
     lobby.move()

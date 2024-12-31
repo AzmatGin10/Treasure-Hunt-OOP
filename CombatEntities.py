@@ -218,6 +218,7 @@ class Player(Entity):
             else:
                 return self.loadout()
         if response == "Drop Items":
+
             if len(self.inventory) > 0:
                 items = [item for item in self.inventory if item != self.currentarmour and item != self.currentweapon]
                 choices = [item.get_name() for item in self.inventory if item != self.currentarmour and item != self.currentweapon]
@@ -235,22 +236,26 @@ class Player(Entity):
                 if PlayerInput:
                     return self.loadout()
             else:
+
                 print("You have no items!")
                 PlayerInput = getch.getch()
                 if PlayerInput:
                     return self.loadout()
+                
         else:
             pass
 class Enemy(Entity):
     def __init__(self, level):
         if level == 0:
-            names = ["Skeleton", "Goblin", "Skeleton with a Helmet!"]
+
+            names = ["Skeleton", "Goblin", "Skeleton with a Helmet"]
             name = names[random.randint(0, len(names)-1)]
             hp = 200
             DMG = 10
             stamina = 100
-            self.gold = 10
+            self.gold = 15
         if level == 1:
+
             names = ["Large Skeleton", "Ogre", "Shrouded Figure"]
             name = names[random.randint(0, len(names)-1)]
             hp = 300
@@ -258,6 +263,7 @@ class Enemy(Entity):
             stamina = 100
             self.gold = 50
         if level == 2:
+
             names = ["Sneaky Goblin", "Skeleton Warrior", "Green Laekan"]
             name = names[random.randint(0, len(names)-1)]
             hp = 400
@@ -265,14 +271,16 @@ class Enemy(Entity):
             stamina = 100
             self.gold = 100
         if level == 3:
+
             names = ["Undead Corpse", "Faller", "Vampire", "Beast"]
             name = names[random.randint(0, len(names)-1)]
             hp = 500
             DMG = 30
             stamina = 150
             self.gold = 200
+
         if level == 4:
-            names = ["Destroyer", "Sary Never Clear", "Grief", "Ashquan", "Kaido"]
+            names = ["Madness of Stereo", "Sary Never Clear", "Griefer", "Ashquan", "Kaiden"]
             name = names[random.randint(0, len(names)-1)]
             hp = 1000
             DMG = 50
@@ -296,11 +304,11 @@ class Enemy(Entity):
         
 class Boss(Entity):
     def __init__(self):
-        names = ["Leader of The Raiju, Nosferatu Zodd", "Ashen One", "Bob"]
+        names = ["Leader of The Raiju, Nosferatu Zodd", "Bringer of Calamity, Ashen One", "Solo Leveller"]
         name = names[random.randint(0, len(names)-1)] 
-        hp = 100
-        DMG = 10
-        stamina = 100
+        hp = 2000
+        DMG = 50
+        stamina = 300
         super().__init__(name, hp, DMG, stamina)
     def heal(self):
         self.set_hp(10)
@@ -308,6 +316,16 @@ class Boss(Entity):
         self.get_guard = True
     def big_attack(self, player):
         player.set_hp(self.get_DMG()*-5 if not player.get_guard() else self.get_DMG()*-2)  
+    def random_move(self):
+        move_prob = [70, 25, 5] #attack defend or big attack
+        prob_total = 100 - random.randint(0, 100)
+        i = len(move_prob) - 1
+        for prob in move_prob:
+            if prob_total <= move_prob[i]:
+                return i
+            else:
+                prob_total -= move_prob[i]
+                i -= 1
 
 player = Player("Ryan", 200, 20, 100)
 enemy = Enemy(1)
@@ -327,7 +345,6 @@ player.pick_up(dagger2)
 player.pick_up(armour1)
 player.pick_up(armour2)
 #print(enemy.random_move())
-
 
 #print(player.view_stats())
 #print(player.currentweapon.get_desc())

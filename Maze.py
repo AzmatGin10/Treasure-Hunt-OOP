@@ -1,5 +1,5 @@
 import random
-from System import clear_console, game_over
+from System import clear_console, game_over, message, good_end, choose_end
 import getch 
 from rich import print
 from collections import deque 
@@ -28,7 +28,7 @@ class Maze:
         ]
 
         self.level = 0
-
+        self.ending = False
         self.enclosed_areas = None
 
     def CleanUp(self):
@@ -293,7 +293,25 @@ class Maze:
         self.min_distance = self.mazeSize//2
         self.exitX, self.exitY  = None, None
         self.enclosed_areas = None
-        
+
+    def TriggerBossBattle(self):
+        boss = Boss()
+        state = CombatTurnStateMachine(self.player, boss, True)
+        while True:
+            status = state.Check_Battle_Status()
+            if status == "win":
+                message(f"{boss.get_name()} wobbled and fell to their knees...\n", 0.2)
+                message(f"You slowly walked over to them, bloodied and battered", 0.1)
+                message(f"\nYou looked down at them, with a face of pity, before swiftly ending them in one swift blow...", 0.3)
+                message(f"\nThe battle was over...", 0.1)
+                good_end(self.player)
+            if status == "lose":
+                choose_end(self.player, boss)
+                            
+            player_move = state.Choose()
+            state.TransitionState()
+            state.Implement(player_move)   
+
     def PlayerExplore(self):
         #set up maze and generate needed assets
         clear_console()
@@ -341,7 +359,7 @@ class Maze:
                     print("You encountered an enemy!\nGet ready for Combat!")
                     enemies.remove((playerX, playerY))
                     enemy = Enemy(self.level)
-                    state = CombatTurnStateMachine(self.player, enemy)
+                    state = CombatTurnStateMachine(self.player, enemy, False)
                     time.sleep(3)
                     while True:
                         status = state.Check_Battle_Status()
@@ -397,10 +415,13 @@ class Maze:
             if (playerX, playerY) == (self.exitX, self.exitY):
                 if self.level == 4:
                     Boss = questionary.confirm("Warning, The next level is a Boss Battle. Are you sure you want to Continue?").ask()
+                    
                     if Boss:
-                        pass
+                        self.ending = True
+                        self.TriggerBossBattle()
+                        break
                     else:
-                        pass
+                        break
 
                 self.level += 1
                 self.mazeSize += 4
@@ -410,6 +431,12 @@ class Maze:
                     self.NextLevel()
                     return self.PlayerExplore()
                 else:
+                    self.mazeSize = 15
+                    self.startX, self.startY = 2*random.randint(0, self.mazeSize//2 - 1) + 1, 2*random.randint(0, self.mazeSize//2 - 1) + 1
+                    self.maze = self.Generate()
+                    self.exitX, self.exitY  = None, None
+                    self.enclosed_areas = None
+                    self.level = 0
                     break
                 
 
@@ -428,7 +455,7 @@ class Maze:
                     del chest_type[(playerX, playerY)]
                 else:
                     pass
-            
+
 player = Player("Ryan", 500, 200, 100)
 
 maze = Maze(player)

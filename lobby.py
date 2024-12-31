@@ -80,7 +80,7 @@ class Lobby():
                 if not self.met_trader:
                     self.trader.give_intro()
                     self.met_trader = True
-                    time.sleep(12)
+                    input()
                     clear_console()
                 self.trader.events(self.player)
 
@@ -96,13 +96,16 @@ class Lobby():
                 enter = questionary.confirm("You cant leave until you find the exit. Would you like to enter the Maze?").ask()
                 if enter:
                     self.maze.PlayerExplore()
+                    if not self.maze.ending:
+                        lobby[mazeY][mazeX] = "#"
+                        playerY -= 1
+                        lobby[playerY][playerX] = "◈"
+                        clear_console()
+                        self.PrintLobby(lobby) 
+                    
 
                 
-                lobby[mazeY][mazeX] = "#"
-                playerY -= 1
-                lobby[playerY][playerX] = "◈"
-                clear_console()
-                self.PrintLobby(lobby) 
+                
             
     def ConvertCell(self, cell):
         if isinstance(cell, str):

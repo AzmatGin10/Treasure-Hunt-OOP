@@ -5,6 +5,8 @@ from art import text2art
 import time
 import sys
 import getch
+
+
 def clear_console():
     if platform.system() == "Windows":
         os.system("cls")  
@@ -54,5 +56,41 @@ def menu():
     if response == "Leave...":
         print("Leaving...")
         time.sleep(3)
-def lobby():
-    pass
+def good_end(player):
+    clear_console()
+    message(f"And so, Salé's curse was lifted, and no longer would the 5...No 4 Great Entities ruin the land of fear-stricken people...", 0.05)
+    message("\nThere was \n", 0.05)
+    message("HOPE", 0.3)
+    time.sleep(3)
+    message(f"\nThe warrior...The hero of Tsubaki...{player.get_name()} would not stop here", 0.1)
+    time.sleep(3)
+    message("\nAfter all...", 0.05)
+    message("\nThere was 4 left...", 0.3)
+    art = text2art("Good Ending")
+    message(art, 0.01)
+def choose_end(player, boss):
+    clear_console()
+    message("\n...", 0.5)
+    message(f"{boss.get_name()} looked down at you with an unreadable gaze...\n", 0.1)
+    message(f"Warrior...\nThats what they call people like you in this land right?", 0.1)
+    message(f"\nYou looked at {boss.get_name()} with shock... \nHe could talk?", 0.1)
+    time.sleep(1)
+    message("Your strength is admirable...", 0.1)
+    message("\nI'll give you a choice warrior...", 0.2)
+    message("\nJoin me or...", 0.2)
+    time.sleep(1)
+    message("DIE\n", 1)
+    join = questionary.confirm("Warning! This Choice will determine the ending of the game!... Would you join the Raiju").ask()
+    if join:
+        message(f"\nAh...I knew you could be trusted...", 0.05)
+        message("\nCome. We have many things to discuss", 0.1)
+        time.sleep(3)
+        message(f"\n\nAnd so, the journey of {player.get_name()} ended. The fallen hero of Tsubaki, A villain who would eventually cause its destruction\n", 0.1)
+        art = text2art("Bad Ending")
+        message(art, 0.01)
+    else:
+        message("...\n", 0.5)
+        message("Ah, i see...Die\n", 0.1)
+        message(f"With a heavy strike, {boss.get_name()} ended your life\n", 0.1)
+        art = text2art("Neutral Ending")
+        message(art, 0.01)
