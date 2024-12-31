@@ -1,16 +1,21 @@
-#start of with a menu thats simply whether you wish to play or not and also a little tutorial guide => a para on things to know
-#Asks for a name 
 #get spawned into the lobby
 #LOBBY => Trader and maze
 # Trader is a simple symbol First time engages an introduction but afterwars just engages events
 #Maze => Calls PlayerExplore IF THIS BREAKS GET SPAWNED BACK TO LOBBY => if maze.level > 0 make it so you can choose from level 0 -> current
 #Else Just continue the explortion
-#Once lvl4 is completed, initiate boss battle 
+#Once lvl4 is completed, initiate boss battle
 #if win, have little dialogue and lore and break story and finish => GOOD END
 #IF lose, Have a shocking convo with boss, they can talk, beckons you to join => if you do => hidden end else: die (bad end) 
+from CombatEntities import Player, Enemy, Boss
+from Trader import Trader
 import time
 from System import menu, clear_console, message, get_name
 import questionary
+from lobby import Lobby
+from Maze import Maze
+
+
+
 start = menu()
 if start == "starting game":
     clear_console()
@@ -25,9 +30,12 @@ if start == "starting game":
         time.sleep(0.5)
         message("None succeeded\n", 0.1)
         time.sleep(1)
-        message("Until, a travellor from a distance land full of adventure, arrived in a small village called 'Salé'. A travellor who would change the fate of Tsubaki forever\n", 0.1)
-        message("That travellors name was...\n", 0.2)
+        message("Until, a traveller from a distance land full of adventure, arrived in a small village called 'Salé'. A traveller who would change the fate of Tsubaki forever\n", 0.1)
+        message("That travellers name was...\n", 0.2)
     name = get_name()
+    player = Player(name, 500, 200, 100)
+    maze = Maze(player)
+    trader = Trader()
     message(f"{name}...", 0.2)
     message("It truly was a befitting name.\n", 0.08)
     message(name, 0.1)
@@ -36,6 +44,7 @@ if start == "starting game":
     message("A story of ", 0.1)
     message("tragedy ", 0.01)
     message("and", 0.05)
-    message(" heroism...\n", 0.07)
+    message(" heroism...\n", 0.1)
     message("Let us begin...", 0.1)
-    #go to lobby
+    lobby = Lobby(player, maze, trader)
+    lobby.move()

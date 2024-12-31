@@ -334,6 +334,6 @@ class Trader():
 player = Player("Izhaan", 100, 10, 100)
 player.gold += 0
 trader = Trader()
-trader.give_intro()
-trader.events(player)
+#trader.give_intro()
+#trader.events(player)
 

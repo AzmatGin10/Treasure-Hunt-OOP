@@ -117,7 +117,7 @@ class Maze:
         exits.remove(exit)
         self.exitX, self.exitY = exit[0], exit[1]
         self.enclosed_areas = exits
-
+    
     def ConvertCell(self, cell):
         if isinstance(cell, str):
             return cell
@@ -222,7 +222,7 @@ class Maze:
                 ).ask()
                 chosen_weapon = weapons[display_weapons.index(response)]
                 try:
-                    player.pick_up(chosen_weapon)
+                    self.player.pick_up(chosen_weapon)
                     items.remove(chosen_weapon)
                     print(f"You picked up [bold red]{chosen_weapon.get_name()}[/bold red]")
                     PlayerInput = getch.getch()
@@ -239,7 +239,7 @@ class Maze:
                 for item in items:
                     if isinstance(item, Armour):
                         try:
-                            player.pick_up(item)
+                            self.player.pick_up(item)
                             items.remove(item)
                             print(f"You picked up [bold purple]{item.get_name()}[/bold purple]")
                             PlayerInput = getch.getch()
@@ -255,7 +255,7 @@ class Maze:
                 for item in items:
                     if isinstance(item, HealingItem):
                         try:
-                            player.pick_up(item)
+                            self.player.pick_up(item)
                             items.remove(item)
                             print(f"You picked up [bold blue]{item.get_name()}[/bold blue]")
                             PlayerInput = getch.getch()
@@ -271,7 +271,7 @@ class Maze:
                 clear_console()
                 try:
                     for item in items:
-                        player.pick_up(item)
+                        self.player.pick_up(item)
                     print("You picked everything up!")   
                     PlayerInput = getch.getch()
                     if PlayerInput:
@@ -282,7 +282,7 @@ class Maze:
                     if PlayerInput:
                         return self.view_chest(items)
             elif response == "Check self":
-                player.loadout()
+                self.player.loadout()
                 return self.view_chest(items)
             else:
                 pass
@@ -346,8 +346,8 @@ class Maze:
                     while True:
                         status = state.Check_Battle_Status()
                         if status == "win":
-                            player.reset()
-                            player.get_gold(enemy)
+                            self.player.reset()
+                            self.player.get_gold(enemy)
                             print(f"For fighting {enemy.get_name()}, you were awarded {enemy.gold} Gold!")
                             time.sleep(3)
                             break
@@ -414,7 +414,7 @@ class Maze:
                 
 
             if (playerX, playerY) in chest_type:
-                #will need to have items and stuff soon
+                
                 type = chest_type[(playerX, playerY)]
                 
                 chest_items = self.generate_chest_loot(type)
@@ -425,6 +425,7 @@ class Maze:
                     if (playerX, playerY) == key:
                         input("In a corner of the Chest you found A key!⚿ You can now Leave!")
                         have_key = True
+                    del chest_type[(playerX, playerY)]
                 else:
                     pass
             
@@ -432,7 +433,7 @@ player = Player("Ryan", 500, 200, 100)
 
 maze = Maze(player)
 
-maze.PlayerExplore()
+#maze.PlayerExplore()
 
 
 

@@ -16,7 +16,10 @@ def message(sentence, delay):
         sys.stdout.flush()
         time.sleep(delay)
 def get_name():
-    response = questionary.text("What's your name?").ask()
+    response = questionary.text(
+    "What is your name?",
+    validate=lambda text: text.isalpha() or "Please enter a valid name!"
+    ).ask()
     confirm = questionary.confirm(f"{response}... Is this correct?").ask()
     if confirm:
         return response
@@ -41,7 +44,7 @@ def menu():
     if response == "Start Game!":
         return "starting game"
     if response == "Tutorial!":
-        message("The main purpose of the game is to complete all levels of the maze and kill the boss, ending the game. To access your loadout, press 'i' in the lobby\nYou will be reminded of this in the maze so do not worry\nAnything else is self explanatory so I will leave you be\nHave fun!", 0.03)
+        message("The main purpose of the game is to complete all levels of the maze and kill the boss, ending the game. To access your loadout, press 'i' in the lobby\nYou will be reminded of this in the maze so do not worry. Be careful though! You only get one life!\nAnything else is self explanatory so I will leave you be.\nHave fun!", 0.03)
         print("\npress any key to continue...")
         Input = getch.getch()
         

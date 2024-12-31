@@ -313,7 +313,7 @@ player = Player("Ryan", 200, 20, 100)
 enemy = Enemy(1)
 boss = Boss()
 
-print(player.gold)
+
 random_dagger = CreateRandomWeapon(0)
 random_stick = CreateRandomWeapon(3)
 dagger1 = random_dagger.make_weapon()
